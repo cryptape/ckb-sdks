@@ -2,7 +2,7 @@ const {ethers} = require("hardhat");
 const {expect} = require("chai");
 
 
-describe("CallContractTest.js Pre Cross Compile Cotract  ", function () {
+describe("CallContractTest.js Pre Cross Compile Contract  ", function () {
     this.timeout(2000000)
 
     let contract;
