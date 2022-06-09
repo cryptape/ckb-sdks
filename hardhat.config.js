@@ -76,9 +76,9 @@ module.exports = {
         // }
     },
     //bsc_test
-    // defaultNetwork: "gw_testnet_v11", //gw_local_kit_net_v1 gw_testnet_v11
+    defaultNetwork: "gw_local_kit_net_v11", //gw_local_kit_net_v1 gw_testnet_v11
     // defaultNetwork: "gw_testnet_v11",
-    defaultNetwork: "gw_local_kit_net_v11",
+    // defaultNetwork: "gw_local_kit_net_v11",
     solidity: {
         compilers: [
             { // for polyjuice contracts
