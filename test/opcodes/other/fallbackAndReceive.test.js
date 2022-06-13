@@ -1,88 +1,204 @@
 const {ethers} = require("hardhat");
 const {expect} = require("chai");
+const {getTxReceipt} = require("../../rpc/utils/tx.js");
 
 //fallback
 // receive
-
+receiveLogSig = "0x26002f13cda87336975286da772958298bec2da9e741d7e196bee6d11e1a4cc2"
+fallbackLogSig = "0x2ed95b708d6d6c8bf930186255cc1fa24903be080fd4f7161f6fd607014af13d"
 describe("fallback and receive", function () {
     this.timeout(100000)
 
-    
 
     describe("fallbackAndReceive", function () {
 
         let fallbackAndReceiveContract
-        // let fallbackAndReceiveOnlyHaveFallbackContract;
-        // let NoFallbackAndReceive
         before(async function () {
             const contractInfo = await ethers.getContractFactory("fallbackAndReceive");
             fallbackAndReceiveContract = await contractInfo.deploy();
             await fallbackAndReceiveContract.deployed();
-            // const fallbackAndReceiveOnlyHaveFallbackContractInfo = await ethers.getContractFactory("fallbackAndReceiveOnlyHaveFallback");
-            // fallbackAndReceiveOnlyHaveFallbackContract = await fallbackAndReceiveOnlyHaveFallbackContractInfo.deploy()
-            // await fallbackAndReceiveOnlyHaveFallbackContract.deployed();
-            // const NoFallbackAndReceiveInfo = await ethers.getContractFactory("NoFallbackAndReceive")
-            // const NoFallbackAndReceive = await NoFallbackAndReceive.deployed()
-            // await NoFallbackAndReceive.deployed();
         });
 
-        
-        it("0x 不带value=>receive", async () => {
+
+        it.skip("0x with value=>receive(eth_estimateGas return 0x0)", async () => {
+            //eth_estimateGas return 0x0
             let result = await ethers.provider.send("eth_sendTransaction", [{
-                "from": fromUserAddress,
-                "to": fallbackAndReceiveContract.address,
-                "data": "0x",
-                "value": "0x11",
+                "to": fallbackAndReceiveContract.address, "data": "0x", "value": "0x11",
+            }])
+            console.log(result)
+        })
+
+        it("0x, no value=>receive(eth_call return 0x0)", async () => {
+            //eth_estimateGas return 0x0
+            let result = await ethers.provider.send("eth_call", [{
+                "to": fallbackAndReceiveContract.address, "data": "0x", "value": "0x11",
             }, "latest"])
             console.log(result)
-            
-            
         })
 
-        it("0x 带value", async () => {
+        it.skip("0x ,with value=>receive(bug)", async () => {
+            //eth_estimateGas return 0x0
+            const beforeBalanceOfContract = await ethers.provider.getBalance(fallbackAndReceiveContract.address)
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": fallbackAndReceiveContract.address, "data": "0x", "gas": "0xffffff", "value": "0x11",
+            }])
+
+            // check receipt contains receiveLogSig log
+            const receipt = await getTxReceipt(ethers.provider, result, 10)
+            expect(checkTxContainsLog(receipt, receiveLogSig)).to.be.equal(true)
+
+            // check transfer pass
+            const balanceOfContract = await ethers.provider.getBalance(fallbackAndReceiveContract.address)
+            expect(balanceOfContract.sub(beforeBalanceOfContract).toHexString()).to.be.equal("0x11")
 
         })
 
-        it("0xasda,不带value", async () => {
+        it.skip("0x ,no value => receive", async () => {
+
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": fallbackAndReceiveContract.address, "data": "0x", "gas": "0xffffff",
+            }])
+
+            // check receipt contains receiveLogSig log
+            const receipt = await getTxReceipt(ethers.provider, result, 10)
+            expect(checkTxContainsLog(receipt, receiveLogSig)).to.be.equal(true)
 
         })
 
-        it("0xasda,带value", async () => {
+        it("0xffffffff,no value => fallback", async () => {
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": fallbackAndReceiveContract.address, "data": "0xffffffff", "gas": "0xffffff",
+            }])
 
+            const receipt = await getTxReceipt(ethers.provider, result, 10)
+            expect(checkTxContainsLog(receipt, fallbackLogSig)).to.be.equal(true)
+
+        })
+
+        it("0xffffffff,with value => fallback", async () => {
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": fallbackAndReceiveContract.address, "data": "0xffffffff", "gas": "0xffffff", "value": "0x11",
+            }])
+            const receipt = await getTxReceipt(ethers.provider, result, 10)
+            expect(receipt.status).to.be.equal(0)
         })
 
     })
 
-    describe("OnlyHavefallback", function () {
+    describe("OnlyHaveFallback", function () {
 
-        it("0x 不带value", async () => {
+        let fallbackAndReceiveOnlyHaveFallbackContract;
+        before(async function () {
+
+            const fallbackAndReceiveOnlyHaveFallbackContractInfo = await ethers.getContractFactory("fallbackAndReceiveOnlyHaveFallback");
+            fallbackAndReceiveOnlyHaveFallbackContract = await fallbackAndReceiveOnlyHaveFallbackContractInfo.deploy()
+            await fallbackAndReceiveOnlyHaveFallbackContract.deployed();
+
+        });
+
+        it.skip("0x, no value => fallback(bug)", async () => {
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": fallbackAndReceiveOnlyHaveFallbackContract.address, "data": "0x", "gas": "0xffffff",
+            }])
+            const receipt = await getTxReceipt(ethers.provider, result, 10)
+
+            // check invoke fallback
+            expect(checkTxContainsLog(receipt, fallbackLogSig)).to.be.equal(true)
 
         })
-        it("0x 带value", async () => {
+        it("0x with value => fallback", async () => {
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": fallbackAndReceiveOnlyHaveFallbackContract.address,
+                "data": "0xffffffff",
+                "gas": "0xffffff",
+                "value": "0x11",
+            }])
+            const receipt = await getTxReceipt(ethers.provider, result, 10)
+
+            // check is
+            expect(checkTxContainsLog(receipt, fallbackLogSig)).to.be.equal(true)
 
         })
 
-        it("0xsada，不带value", async () => {
+        it("0xffffffff，no value => fallback", async () => {
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": fallbackAndReceiveOnlyHaveFallbackContract.address, "data": "0xffffffff", "gas": "0xffffff",
+            }])
+            const receipt = await getTxReceipt(ethers.provider, result, 10)
+
+            // check invoke fallback
+            expect(checkTxContainsLog(receipt, fallbackLogSig)).to.be.equal(true)
 
         })
 
-        it("0xsada ,带value", async () => {
+        it("0xffffff ,with value => fallback", async () => {
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": fallbackAndReceiveOnlyHaveFallbackContract.address,
+                "data": "0xffffffff",
+                "gas": "0xffffff",
+                "value": "0x11",
+            }])
+            const receipt = await getTxReceipt(ethers.provider, result, 10)
+
+            // check invoke fallback
+            expect(checkTxContainsLog(receipt, fallbackLogSig)).to.be.equal(true)
 
         })
     })
 
     describe("NoFallbackAndReceive", function () {
-        it("0x ,value", async () => {
+        let noFallbackAndReceive
+        before(async function () {
+
+            const NoFallbackAndReceiveInfo = await ethers.getContractFactory("NoFallbackAndReceive")
+            noFallbackAndReceive = await NoFallbackAndReceiveInfo.deploy()
+            await noFallbackAndReceive.deployed();
+        });
+        it.skip("0x ,with value(bug)", async () => {
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": noFallbackAndReceive.address, "data": "0x", "gas": "0xffffff", "value": "0x11",
+            }])
+            const receipt = await getTxReceipt(ethers.provider, result, 20)
+
+            // check tx is failed
+            expect(receipt.status).to.be.equal(0)
 
         })
 
-        it("0xsada,", async () => {
+        it.skip("0x,no value(bug)", async () => {
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": noFallbackAndReceive.address, "data": "0x", "gas": "0xffffff",
+            }])
+            const receipt = await getTxReceipt(ethers.provider, result, 10)
 
+            // check tx is failed
+            expect(receipt.status).to.be.equal(0)
         })
 
-        it("0xxxas,value", async () => {
+        it("0xffffffff,value", async () => {
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": noFallbackAndReceive.address, "data": "0xffffffff", "gas": "0xffffff", "value": "0x11",
+            }])
+            const receipt = await getTxReceipt(ethers.provider, result, 20)
 
+            // check tx is failed
+            expect(receipt.status).to.be.equal(0)
         })
+
+        it("0xffffffff,no value", async () => {
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": noFallbackAndReceive.address, "data": "0xffffffff", "gas": "0xffffff",
+            }])
+            const receipt = await getTxReceipt(ethers.provider, result, 20)
+
+            // check tx is failed
+            expect(receipt.status).to.be.equal(0)
+        })
+
     })
 
+})
+
+function checkTxContainsLog(txReceipt, topicLogSig) {
+    return txReceipt.logs.filter(log => log.topics[0] === topicLogSig).length >= 1
 }

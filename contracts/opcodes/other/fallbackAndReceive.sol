@@ -3,8 +3,9 @@ pragma solidity ^0.6.10;
 contract fallbackAndReceive {
 
     uint256 internal _value;
-    event fallbackEvent(bytes);
-    event receiveEvent(bytes,uint256);
+    uint256 internal _valueReceipt;
+    event fallbackEvent(bytes data);
+    event receiveEvent(bytes data,uint256 value);
     function public_func() public view returns(uint256) {
         return 1;
     }
@@ -17,12 +18,17 @@ contract fallbackAndReceive {
         return _value;
     }
 
+    function getReceiptNum() public view returns(uint256){
+        return _valueReceipt;
+    }
+
     fallback() external {
         _value = 1;
         emit fallbackEvent(msg.data);
     }
     receive() external payable {
         _value = 2;
+        _valueReceipt=_valueReceipt+1;
         emit receiveEvent(msg.data,msg.value);
     }
 }
@@ -43,7 +49,7 @@ contract fallbackAndReceiveOnlyHaveFallback {
         return _value;
     }
 
-    fallback() external payable{
+    fallback() external payable {
         _value = 1;
         emit fallbackEvent(msg.data);
 
