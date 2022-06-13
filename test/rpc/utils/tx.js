@@ -4,13 +4,13 @@ async function getTxReceipt(provider, txHash, count) {
     let response
     for (let i = 0; i < count; i++) {
         response = await provider.getTransactionReceipt(txHash);
-        await new Promise(r => setTimeout(r, 2000));
         if (response == null) {
             continue;
         }
         if (response.confirmations === 1) {
             return response
         }
+        await sleep(2000)
         // if (response.from !== "0x0000000000000000000000000000000000000000") {
         //     return response
         // }
@@ -85,6 +85,10 @@ async function sendRandomTx(provider) {
         }]);
     } catch (e) {
     }
+}
+
+async function sleep(timeOut){
+    await new Promise(r => setTimeout(r, timeOut));
 
 }
 

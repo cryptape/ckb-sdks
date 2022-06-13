@@ -133,31 +133,32 @@ contract FailedTxContract{
     uint256 public BridgeTransferLatestUpdateTime;
 
     uint256 public Create2LatestUpdateTime;
-    //delegatecall
-    enum ModDataStyle{
-        NORMAL,  // 修改int int[] string map 的数据
-        CROSS_NORMAL, // 修改跨合约的int int[] string map 的数据
-        BRIDGE_TRANSFER, // 调用代理ckb的transfer
-        SELF_DESTRUCT, // 自毁合约
-        CREATE2,    // create2
-        DELEGATE_CALL, // 委托调用修改自己的int int[] string map 的数据
-        CLS_DESTRUCT // 调用其他合约的自毁方法
 
+    // FailedTxContract
+    enum ModDataStyle{
+        NORMAL, //0: mod int int[] string map  data
+        CROSS_NORMAL, //1: mod cross contract's int int[] string map data
+        BRIDGE_TRANSFER, //2: mod proxy ckb token data
+        SELF_DESTRUCT, //3: self destruct
+        CREATE2, //4: deploy new contract use create2
+        DELEGATE_CALL, //5: delegate call mod self int int[] string map data
+        CLS_DESTRUCT     //6: mod other contract data use cross call
     }
+    //     https://blog.soliditylang.org/2020/12/16/solidity-v0.8.0-release-announcement/
+    //     notice : only support > 0.8.0
     enum FailedStyle{
-        NO,         //合法交易
-        REQUIRE_1,  // require
-        ASSERT01,   // assert false
-        ASSERT11,   // 数值溢出
-        ASSERT12,   // 除0
-        ASSERT21,   // 负数或大数转枚举失败
-        ASSERT22,   // 访问存储的字节数组编码不正确
-        ASSERT31,   // pop 空数据
-        ASSERT32,   // 出现out of bounds
-        ASSERT41,   // 创建太大的数组
-        ASSERT51,    // 调用内部函数类型的初始化为0的变量
-        Error1,
-        Panic1
+        NO, // 0: normal tx
+        REQUIRE_1, // 1: failed for require(false)
+        ASSERT01, // 2: 0x01: assert false
+        ASSERT11, // 3: 0x11: If an arithmetic operation results in underflow or overflow
+        ASSERT12, // 4: 0x12: divide or divide modulo by zero
+        ASSERT21, // 5: 0x21: If you convert a value that is too big or negative into an enum type.
+        ASSERT22, // 6: 0x22: If you access a storage byte array that is incorrectly encoded.
+        ASSERT31, // 7: 0x31: If you call .pop() on an empty array.
+        ASSERT32, // 8: 0x32: If you access an array, bytesN or an array slice at an out-of-bounds or negative index (i.e. x[i] where i >= x.length or i < 0).
+        ASSERT41, // 9: 0x41: If you allocate too much memory or create an array that is too large.
+        ASSERT51, // 10: todo:0x51: If you call a zero-initialized variable of internal function type.
+        Error1     // 11: error
     }
 
     FailedTxContract public failedTxContract;
