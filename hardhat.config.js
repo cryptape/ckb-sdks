@@ -39,7 +39,7 @@ module.exports = {
             accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`,`0x${PRIVATE_KEY3}`,`0x${PRIVATE_KEY4}`,`0x${PRIVATE_KEY5}`,`0x${PRIVATE_KEY6}`]
         },
 
-        gw_local_kit_net_v11: {
+        gw_local_kit_net_v1: {
             url: `http://127.0.0.1:8024`,
             accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`,`0x${PRIVATE_KEY3}`,`0x${PRIVATE_KEY4}`,`0x${PRIVATE_KEY5}`,`0x${PRIVATE_KEY6}`]
         },
@@ -78,7 +78,8 @@ module.exports = {
     //bsc_test
     // defaultNetwork: "gw_testnet_v11", //gw_local_kit_net_v1 gw_testnet_v11
     // defaultNetwork: "gw_testnet_v11",
-    defaultNetwork: "gw_local_kit_net_v11",
+    // defaultNetwork: "rinkeby",
+    defaultNetwork: "gw_local_kit_net_v1",
     solidity: {
         compilers: [
             { // for polyjuice contracts

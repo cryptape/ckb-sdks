@@ -118,7 +118,7 @@ describe("opcodeTxWithMsg.js opcode -tx msg ", function () {
             expect(msgDatWithValue.msgSender).to.be.equal(contractWithValue.signer.address);
             expect(msgDatNoValue.msgSender).to.be.equal(contract2NoValue.signer.address);
         })
-        it('tx.gasPrice', async () => {
+        it('tx.gasPrice(https://github.com/nervosnetwork/godwoken-web3/issues/377)', async () => {
             expect(txDataWithValue.txGasPrice).to.be.equal(txWithValue.gasPrice);
             expect(txDataNoValue.txGasPrice).to.be.equal(txWithNoValue.gasPrice);
         })
@@ -164,7 +164,7 @@ describe("opcodeTxWithMsg.js opcode -tx msg ", function () {
         it('msg.sender', async () => {
             expect(msgData.msgSender).to.be.equal(contractWithValue.address);
         })
-        it('tx.gasPrice', async () => {
+        it('tx.gasPrice(https://github.com/nervosnetwork/godwoken-web3/issues/377)', async () => {
             expect(txData.txGasPrice).to.be.equal(tx.gasPrice);
         })
         it('tx.origin', async () => {
