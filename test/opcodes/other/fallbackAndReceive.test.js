@@ -20,7 +20,7 @@ describe("fallback and receive", function () {
         });
 
 
-        it.skip("0x with value=>receive(eth_estimateGas return 0x0)", async () => {
+        it("0x with value=>receive(https://github.com/nervosnetwork/godwoken-web3/issues/335)", async () => {
             //eth_estimateGas return 0x0
             let result = await ethers.provider.send("eth_sendTransaction", [{
                 "to": fallbackAndReceiveContract.address, "data": "0x", "value": "0x11",
@@ -36,7 +36,7 @@ describe("fallback and receive", function () {
             console.log(result)
         })
 
-        it.skip("0x ,with value=>receive(bug)", async () => {
+        it("0x ,with value=>receive", async () => {
             //eth_estimateGas return 0x0
             const beforeBalanceOfContract = await ethers.provider.getBalance(fallbackAndReceiveContract.address)
             let result = await ethers.provider.send("eth_sendTransaction", [{
@@ -53,7 +53,7 @@ describe("fallback and receive", function () {
 
         })
 
-        it.skip("0x ,no value => receive", async () => {
+        it("0x ,no value => receive", async () => {
 
             let result = await ethers.provider.send("eth_sendTransaction", [{
                 "to": fallbackAndReceiveContract.address, "data": "0x", "gas": "0xffffff",
@@ -96,7 +96,7 @@ describe("fallback and receive", function () {
 
         });
 
-        it.skip("0x, no value => fallback(bug)", async () => {
+        it("0x, no value => fallback(bug)", async () => {
             let result = await ethers.provider.send("eth_sendTransaction", [{
                 "to": fallbackAndReceiveOnlyHaveFallbackContract.address, "data": "0x", "gas": "0xffffff",
             }])
@@ -154,7 +154,7 @@ describe("fallback and receive", function () {
             noFallbackAndReceive = await NoFallbackAndReceiveInfo.deploy()
             await noFallbackAndReceive.deployed();
         });
-        it.skip("0x ,with value(bug)", async () => {
+        it("0x ,with value", async () => {
             let result = await ethers.provider.send("eth_sendTransaction", [{
                 "to": noFallbackAndReceive.address, "data": "0x", "gas": "0xffffff", "value": "0x11",
             }])
@@ -165,7 +165,7 @@ describe("fallback and receive", function () {
 
         })
 
-        it.skip("0x,no value(bug)", async () => {
+        it("0x,no value", async () => {
             let result = await ethers.provider.send("eth_sendTransaction", [{
                 "to": noFallbackAndReceive.address, "data": "0x", "gas": "0xffffff",
             }])

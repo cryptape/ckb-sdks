@@ -124,7 +124,7 @@ describe("addressContract.js opcode -address(address(this),address(this).balance
             expect(result[4]).to.be.equal("0x0000000000000000000000000000000000000000000000000000000000000000")
         })
 
-        it("un register address", async () => {
+        it("un register address(https://github.com/nervosnetwork/godwoken-web3/issues/391)", async () => {
             let result = await contract.getOtherAddress("0xdB81D2b8154A10C6f25bC2a9225F403D954D0B65");
             expect(result[0]).to.be.equal("0xdB81D2b8154A10C6f25bC2a9225F403D954D0B65")
             expect(result[1]).to.be.equal(0n)

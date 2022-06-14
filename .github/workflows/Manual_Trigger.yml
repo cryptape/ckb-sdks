@@ -15,7 +15,6 @@ on:
         default: 'true'
       TestScript:
         description: 'exec test case:1.test 2:test:gw_local_kit_net_v1 3:test:bsc_test ,4:test:gw_testnet_v1'
-        required: false
         default: 'test:gw_local_kit_net_v1'
 #    inputs:
 #      logLevel:
@@ -68,7 +67,6 @@ jobs:
           echo "GitBranchForKit: ${{ github.event.inputs.GitBranchForKit }}"
           echo "TestScript: ${{ github.event.inputs.TestScript }}"
           echo "StartGodwoken: ${{ github.event.inputs.StartGodwoken }}"
-
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -95,9 +93,12 @@ jobs:
             ./kicker ps web3
             ./kicker logs
             ./kicker logs web3
-            ./kicker deposit 0xCD1d13450cFA630728D0390C99957C6948BF7d19 1000
-            ./kicker deposit 0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73 1000
-            ./kicker deposit 0x6DaF63D8411D6E23552658E3cFb48416A6A2CA78 1000
+            ./kicker deposit 0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73 10000
+            ./kicker deposit 0x40711aDc577DE17232DD6F997022F68BE6BE8560 10000
+            ./kicker deposit 0x934F1EbCB57ce1D9985A4c4f8811D17B04342067 10000
+            ./kicker deposit 0xC4A4281378FE711d2e02480Cb7568952EB249fdF 10000
+            ./kicker deposit 0x6B75801d17BcB7dbA0bDfE1d989e49A722e020e6 10000
+            ./kicker deposit 0x8974eD1cfA93B1E28E11005E3eA88AF81452113a 10000
             cd ../
             curl http://localhost:8024 -X POST -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"web3_clientVersion","params": [],"id":1}'
           fi
@@ -106,10 +107,14 @@ jobs:
         run: |
           npm install
           npm run ${{ github.event.inputs.TestScript }}
-      - name: Test Report
-        uses: dorny/test-reporter@v1
+      - name: Generate report
+        if: success() || failure()
+        run: |
+          mkdir public
+          cp -r mochawesome-report/* public
+      - name: Deploy report page to GitHub Page
+        uses: peaceiris/actions-gh-pages@v3
         if: success() || failure()
         with:
-          name: mocha Tests
-          path: test-results.json
-          reporter: mocha-json
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public

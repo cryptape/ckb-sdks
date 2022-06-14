@@ -1,24 +1,24 @@
 const {ethers} = require("hardhat");
 const {expect} = require("chai");
 const {getGasPrice} = require("./utils/tx.js");
-const {RLP} = require("ethers/lib/utils"); // NodeJS
+const {BigNumber} = require("ethers"); // NodeJS
 
 const noRegisterAddress = "0xA768cB32724eE05cd9A4d6fd5818E77c269a45Ed"
 describe("eth_call", function () {
-    this.timeout(100000)
+    this.timeout(1000000)
     let fallbackAndReceiveContract;
     let logContract;
     let fromUserAddress;
-    // before(async function () {
-    //     fromUserAddress = await ethers.provider.getSigner(0).getAddress()
-    //     let fallbackAndReceiveContractInfo = await ethers.getContractFactory("fallbackAndReceive");
-    //     let logContractInfo = await ethers.getContractFactory("LogContract");
-    //     logContract = await logContractInfo.deploy()
-    //     await logContract.deployed()
-    //     fallbackAndReceiveContract = await fallbackAndReceiveContractInfo.deploy()
-    //     await fallbackAndReceiveContract.deployed();
-    //
-    // });
+    before(async function () {
+        fromUserAddress = await ethers.provider.getSigner(0).getAddress()
+        let fallbackAndReceiveContractInfo = await ethers.getContractFactory("fallbackAndReceive");
+        let logContractInfo = await ethers.getContractFactory("LogContract");
+        logContract = await logContractInfo.deploy()
+        await logContract.deployed()
+        fallbackAndReceiveContract = await fallbackAndReceiveContractInfo.deploy()
+        await fallbackAndReceiveContract.deployed();
+
+    });
 
     describe("tx.from", async function () {
         it("from address not exist = > from id not exist ", async () => {
@@ -54,7 +54,7 @@ describe("eth_call", function () {
 
         it("deploy tx => failed(to address is null) ", async () => {
             try {
-                let result = await ethers.provider.send("eth_call", [{
+                await ethers.provider.send("eth_call", [{
                     "data": logContract.bytecode,
                 }, "latest"]);
             } catch (e) {
@@ -98,10 +98,13 @@ describe("eth_call", function () {
     describe("ethCall block msg tx", async function () {
         const getMsgFnSign = "0xb5fdeb23"
         let ethCallContract
+        let deployTxReceipt;
         before(async function () {
             let ethCallContractInfo = await ethers.getContractFactory("ethCallContract");
             ethCallContract = await ethCallContractInfo.deploy()
             await ethCallContract.deployed()
+            deployTxReceipt = await ethCallContract.deployTransaction.wait(3)
+            console.log("deployTxReceipt:",deployTxReceipt)
         })
 
 
@@ -115,7 +118,167 @@ describe("eth_call", function () {
             // ethCallContract.
             let eth_call_msg = decodeGetMsg(result)
             console.log(eth_call_msg)
-            expect(eth_call_msg.msgSender,)
+            expect(eth_call_msg.msgSender).to.be.equal(fromUserAddress)
+            expect(eth_call_msg.msgValue.toString()).to.be.equal("0")
+            expect(eth_call_msg.txOrigin).to.be.equal(fromUserAddress)
+            // geth is 0
+            // expect(eth_call_msg.txGasPrice).to.be.equal("1")
+        })
+
+        it("earliest", async () => {
+            try {
+                await ethers.provider.send("eth_call", [{
+                    "from": fromUserAddress,
+                    "to": ethCallContract.address,
+                    "data": getMsgFnSign
+                }, "earliest"])
+            }catch (e) {
+                expect(e.toString()).to.be.include("to address is not a valid contract")
+            }
+        })
+
+        it(" in deploy num",async ()=>{
+            // deployTxReceipt
+            let result = await ethers.provider.send("eth_call", [{
+                "from": fromUserAddress,
+                "to": ethCallContract.address,
+                "data": getMsgFnSign
+            }, BigNumber.from(deployTxReceipt.blockNumber).toHexString()])
+
+            let eth_call_msg = decodeGetMsg(result)
+            console.log(eth_call_msg)
+            expect(eth_call_msg.blockNumber.toHexString()).to.be.equal(BigNumber.from(deployTxReceipt.blockNumber).toHexString())
+        })
+
+
+
+        it("deploy  num +1",async ()=>{
+            let result = await ethers.provider.send("eth_call", [{
+                "from": fromUserAddress,
+                "to": ethCallContract.address,
+                "data": getMsgFnSign
+            }, BigNumber.from(deployTxReceipt.blockNumber+1).toHexString()])
+            // ethCallContract.
+            let eth_call_msg = decodeGetMsg(result)
+            console.log(eth_call_msg)
+            expect(eth_call_msg.blockNumber.toHexString()).to.be.equal( BigNumber.from(deployTxReceipt.blockNumber+1).toHexString())
+
+        })
+
+        it("larger than the latest block" ,async ()=>{
+            try {
+                let num = await ethers.provider.getBlockNumber()
+                await ethers.provider.send("eth_call", [{
+                    "from": fromUserAddress,
+                    "to": ethCallContract.address,
+                    "data": getMsgFnSign
+                }, BigNumber.from(num+100).toHexString()])
+                expect("").to.be.equal("failed")
+            }catch (e){
+                expect(e.toString()).to.be.include("header not found")
+
+            }
+        })
+
+        it("value",async ()=>{
+            let result = await ethers.provider.send("eth_call", [{
+                "from": fromUserAddress,
+                "to": ethCallContract.address,
+                "value":"0x11",
+                "data": getMsgFnSign
+            }, "latest"])
+            console.log("result:", result)
+            // ethCallContract.
+            let eth_call_msg = decodeGetMsg(result)
+            console.log(eth_call_msg)
+            expect(eth_call_msg.msgValue.toHexString()).to.be.equal("0x11")
+        })
+
+        it("gas",async ()=>{
+            let result = await ethers.provider.send("eth_call", [{
+                "from": fromUserAddress,
+                "to": ethCallContract.address,
+                "value":"0x11",
+                "gas": "0xffff",
+                "data": getMsgFnSign
+            }, "latest"])
+            console.log("result:", result)
+            // ethCallContract.
+            let eth_call_msg = decodeGetMsg(result)
+            console.log(eth_call_msg)
+        })
+
+        it("gas - very big (godwoken-exceeds rpc gas limit of)",async ()=>{
+            try{
+                await ethers.provider.send("eth_call", [{
+                    "from": fromUserAddress,
+                    "to": ethCallContract.address,
+                    "value":"0x11",
+                    "gas": "0xffffffffffff",
+                    "data": getMsgFnSign
+                }, "latest"])
+            }catch (e){
+                expect(e.toString()).to.be.include("exceeds rpc gas limit of")
+            }
+        })
+
+        it("gas - out of gas  ",async ()=>{
+            try{
+                await ethers.provider.send("eth_call", [{
+                    "from": fromUserAddress,
+                    "to": ethCallContract.address,
+                    "value":"0x11",
+                    "gas": "0x11",
+                    "data": getMsgFnSign
+                }, "latest"])
+                expect("").to.be.equal("failed")
+            }catch (e){
+                expect(e.toString()).to.be.include("invalid exit code -93")
+            }
+        })
+
+        it("gasPrice",async ()=>{
+            let result = await ethers.provider.send("eth_call", [{
+                "from": fromUserAddress,
+                "to": ethCallContract.address,
+                "value":"0x11",
+                "gasPrice":"0x11",
+                "data": getMsgFnSign
+            }, "latest"])
+            console.log("result:", result)
+            // ethCallContract.
+            let eth_call_msg = decodeGetMsg(result)
+            console.log(eth_call_msg)
+        })
+        it("gasPrice-very big",async ()=>{
+            try {
+                await ethers.provider.send("eth_call", [{
+                    "from": fromUserAddress,
+                    "to": ethCallContract.address,
+                    "value":"0x11",
+                    "gasPrice":"0x1111111111111111",
+                    "data": getMsgFnSign
+                }, "latest"])
+                expect("").to.be.equal("failed")
+            }catch (e){
+                expect(e.toString()).to.be.include("Insufficient balance")
+            }
+        })
+        it("gasPrice- out of very big",async ()=>{
+            try {
+                await ethers.provider.send("eth_call", [{
+                    "from": fromUserAddress,
+                    "to": ethCallContract.address,
+                    "value":"0x11",
+                    "gasPrice":"0x1111111111111111",
+                    "data": getMsgFnSign
+                }, "latest"])
+                expect("").to.be.equal("failed")
+            }catch (e){
+                expect(e.toString()).to.be.include("Insufficient balance")
+            }
+
+
         })
 
         function decodeGetMsg(decodeData){
