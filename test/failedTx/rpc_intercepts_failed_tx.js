@@ -13,7 +13,7 @@ describe("failed intercepts tx", function () {
 
         it("hexString must has even length" , async () => {
             try {
-                let txHash = await ethers.provider.send("eth_sendRawTransaction", ["0xf8fa8215ce82271083030d408080b8a660566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220921156c6271e9bb625bba2409473901eb7df9309044f9da2786a74bc2dfac9d664736f6c6343000806003383022df6a0b3bccb3e03652d5defc9b53e7bc905399a825e5aa278d809f3db01901d310e1ca07db5263de82feb6c3b244d170cb498bff0d82e4f18bf81af3546fafaca10214"])
+                await ethers.provider.send("eth_sendRawTransaction", ["0xf8fa8215ce82271083030d408080b8a660566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220921156c6271e9bb625bba2409473901eb7df9309044f9da2786a74bc2dfac9d664736f6c6343000806003383022df6a0b3bccb3e03652d5defc9b53e7bc905399a825e5aa278d809f3db01901d310e1ca07db5263de82feb6c3b244d170cb498bff0d82e4f18bf81af3546fafaca10214"])
             } catch (e) {
                 expect(e.toString()).to.be.contains("hexString must has even lengt")
             }
@@ -21,7 +21,7 @@ describe("failed intercepts tx", function () {
 
         it("invalid remainder", async () => {
             try {
-                let txHash = await ethers.provider.send("eth_sendRawTransaction", ["0xf8fa8215ce82271083030d408080b8a660566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220921156c6271e9bb625bba2409473901eb7df9309044f9da2786a74bc2dfac9d664736f6c6343000806003383022df6a0b3bccb3e03652d5defc9b53e7bc905399a825e5aa278d809f3db01901d310e1ca07db5263de82feb6c3b244d170cb498bff0d82e4f18bf811af354622fafaca10214"])
+                await ethers.provider.send("eth_sendRawTransaction", ["0xf8fa8215ce82271083030d408080b8a660566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220921156c6271e9bb625bba2409473901eb7df9309044f9da2786a74bc2dfac9d664736f6c6343000806003383022df6a0b3bccb3e03652d5defc9b53e7bc905399a825e5aa278d809f3db01901d310e1ca07db5263de82feb6c3b244d170cb498bff0d82e4f18bf811af354622fafaca10214"])
             } catch (e) {
                 expect(e.toString()).to.be.contains("invalid remainder")
             }
@@ -29,7 +29,7 @@ describe("failed intercepts tx", function () {
 
         it("invalid RLP: not enough bytes for string", async () => {
             try {
-                let txHash = await ethers.provider.send("eth_sendRawTransaction", ["0xf8fa1215ce82271083030d408080b8a660566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe74000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220921156c6271e9bb625bba2409473901eb7df9309044f9da2786a74bc2dfac9d164736f6c1343000806003383022df6a0b3bccb3e03652d5defc9b53e7bc905399a825e5aa278d809f3db01901d310e1ca07db5263de82feb6c3b244d170cb498bff0d82e4f18bf81af3546fafaca1012e5"])
+                await ethers.provider.send("eth_sendRawTransaction", ["0xf8fa1215ce82271083030d408080b8a660566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe74000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220921156c6271e9bb625bba2409473901eb7df9309044f9da2786a74bc2dfac9d164736f6c1343000806003383022df6a0b3bccb3e03652d5defc9b53e7bc905399a825e5aa278d809f3db01901d310e1ca07db5263de82feb6c3b244d170cb498bff0d82e4f18bf81af3546fafaca1012e5"])
             } catch (e) {
                 expect(e.toString()).to.be.contains("invalid RLP: not enough bytes for string")
             }
@@ -39,7 +39,7 @@ describe("failed intercepts tx", function () {
 
     it("from  unRegistered" , async () => {
         try {
-            let txHash = await ethers.provider.send("eth_sendRawTransaction", ["0xf8fa8215ce82271083030d408080b8a660566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220921156c6271e9bb625bba2409473901eb7df9309044f9da2786a74bc2dfac9d664736f6c6343000806003383022df6a0b3bccb3e03652d5defc9b53e7bc905399a825e5aa278d809f3db01901d310e1ca07db5263de82feb6c3b244d270cb498bff0d82e4f18bf81af3546fafaca1012e5"])
+            await ethers.provider.send("eth_sendRawTransaction", ["0xf8fa8215ce82271083030d408080b8a660566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220921156c6271e9bb625bba2409473901eb7df9309044f9da2786a74bc2dfac9d664736f6c6343000806003383022df6a0b3bccb3e03652d5defc9b53e7bc905399a825e5aa278d809f3db01901d310e1ca07db5263de82feb6c3b244d270cb498bff0d82e4f18bf81af3546fafaca1012e5"])
         } catch (e) {
             expect(e.toString()).to.be.contains("from id not found")
         }
@@ -95,9 +95,9 @@ describe("failed intercepts tx", function () {
 
     })
 
-    it.skip("tx size size is larger than the limit(https://github.com/nervosnetwork/godwoken-web3/issues/381)", async () => {
+    it("tx size size is larger than the limit(https://github.com/nervosnetwork/godwoken-web3/issues/381)", async () => {
         try {
-            let txHash = await ethers.provider.send("eth_sendTransaction", [{
+            await ethers.provider.send("eth_sendTransaction", [{
                 // "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
                 "gas": "0xfffff",
                 "data": MAX_LONG_BYTES
@@ -110,7 +110,7 @@ describe("failed intercepts tx", function () {
 
     })
 
-    it.skip("gasLimit too low(https://github.com/nervosnetwork/godwoken-web3/issues/382)", async () => {
+    it("gasLimit too low(https://github.com/nervosnetwork/godwoken-web3/issues/382)", async () => {
 
         let txHash = await ethers.provider.send("eth_sendTransaction", [{
             "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
@@ -118,7 +118,7 @@ describe("failed intercepts tx", function () {
             "data": "0x60566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220921156c6271e9bb625bba2409473901eb7df9309044f9da2786a74bc2dfac9d664736f6c63430008060033"
         }]);
         console.log("response:", txHash)
-        let response = await getTxReceipt(ethers.provider, txHash, 10)
+        await getTxReceipt(ethers.provider, txHash, 10)
     })
 
     it("gasLimit too max", async () => {
@@ -128,7 +128,7 @@ describe("failed intercepts tx", function () {
             "data": "0x60566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220921156c6271e9bb625bba2409473901eb7df9309044f9da2786a74bc2dfac9d664736f6c63430008060033"
         }]);
         console.log("response:", txHash)
-        let response = await getTxReceipt(ethers.provider, txHash, 10)
+        await getTxReceipt(ethers.provider, txHash, 10)
 
     })
 
@@ -136,11 +136,11 @@ describe("failed intercepts tx", function () {
 
     })
 
-    it.skip(" balance is't sufficient to cover the fees and transfer amount(https://github.com/nervosnetwork/godwoken-web3/issues/385)", async () => {
+    it(" balance is't sufficient to cover the fees and transfer amount(https://github.com/nervosnetwork/godwoken-web3/issues/385)", async () => {
 
         console.log("send tx that value > user's balance")
         try {
-            let txHash = await ethers.provider.send("eth_sendTransaction", [{
+            await ethers.provider.send("eth_sendTransaction", [{
                 // "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
                 "gas": "0x2fa000",
                 "value": "0xffffffffffffffffffffffffffffff",
