@@ -107,12 +107,12 @@ jobs:
         run: |
           npm install
           npm run ${{ github.event.inputs.TestScript }}
-      - name: generate report
-          run: |
-            mkdir public
-            cp -r mochawesome-report/* public
-          - name: Deploy report page to GitHub Page
-            uses: peaceiris/actions-gh-pages@v3
-            with:
-              github_token: ${{ secrets.GITHUB_TOKEN }}
-              publish_dir: ./public
+      - name: Generate report
+        run: |
+          mkdir public
+          cp -r mochawesome-report/* public
+      - name: Deploy report page to GitHub Page
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
