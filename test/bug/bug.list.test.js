@@ -4,6 +4,10 @@ const {getTxReceipt} = require("../rpc/utils/tx.js");
 
 describe("bug",function (){
 
+    //
+    //
+    //
+    //contractInfo = await ethers.getContractFactory("contracts/precompiledContract/CallContractTest.sol:CallContractTest");
     this.timeout(600000)
     it("out of gas tx(https://github.com/RetricSu/godwoken-kicker/issues/279)",async ()=>{
         let eventTestContractInfo = await ethers.getContractFactory("eventTestContract");
