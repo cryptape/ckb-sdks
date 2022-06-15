@@ -5,7 +5,7 @@ const {expect} = require("chai");
 //ext_code_copy
 //code_copy
 describe("opcode_code.js opcode -code ", function () {
-    this.timeout(100000)
+    this.timeout(600000)
 
     let contract;
 

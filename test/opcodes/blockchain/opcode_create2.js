@@ -4,7 +4,7 @@ const {expect} = require("chai");
 //create2
 describe("create2_test.js ", function () {
 
-    this.timeout(1000000)
+    this.timeout(600000)
     let contract;
 
     before(async function () {

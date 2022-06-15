@@ -5,7 +5,7 @@ const {BigNumber} = require("ethers"); // NodeJS
 
 const noRegisterAddress = "0xA768cB32724eE05cd9A4d6fd5818E77c269a45Ed"
 describe("eth_call", function () {
-    this.timeout(1000000)
+    this.timeout(600000)
     let fallbackAndReceiveContract;
     let logContract;
     let fromUserAddress;

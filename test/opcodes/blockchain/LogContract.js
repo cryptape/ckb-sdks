@@ -7,7 +7,7 @@ const {expect} = require("chai");
 //log3
 //log4
 describe("LogContract", function () {
-    this.timeout(100000)
+    this.timeout(600000)
 
     describe("log0", function () {
         let contract;

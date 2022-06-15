@@ -3,7 +3,7 @@ const { ethers } = require("hardhat");
 
 describe("type  max min data test",function (){
     //todo check receipt log
-    this.timeout(1000000)
+    this.timeout(600000)
     describe("typeU8 ", function () {
         let contract;
 
