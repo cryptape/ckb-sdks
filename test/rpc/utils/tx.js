@@ -5,12 +5,15 @@ async function getTxReceipt(provider, txHash, count) {
     for (let i = 0; i < count; i++) {
         response = await provider.getTransactionReceipt(txHash);
         if (response == null) {
+            await sleep(2000)
+
             continue;
         }
         if (response.confirmations === 1) {
             return response
         }
         await sleep(2000)
+
         // if (response.from !== "0x0000000000000000000000000000000000000000") {
         //     return response
         // }

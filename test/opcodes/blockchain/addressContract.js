@@ -6,7 +6,7 @@ const {expect} = require("chai");
 // address(this).code.length
 // address(this).codehash
 describe("addressContract.js opcode -address(address(this),address(this).balance,address(this).code,address(this).code.length,address(this).codehash) ", function () {
-    this.timeout(100000)
+    this.timeout(600000)
 
     let contract
     let contract2

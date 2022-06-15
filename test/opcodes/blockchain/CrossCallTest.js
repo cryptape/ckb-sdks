@@ -6,7 +6,7 @@ const {expect} = require("chai");
 //static_call
 //todo call_code
 describe("CrossCallTest.js cross call ", function () {
-    this.timeout(100000)
+    this.timeout(600000)
     let crossContract
 
     before(async function () {

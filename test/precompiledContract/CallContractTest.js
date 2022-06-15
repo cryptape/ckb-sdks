@@ -3,7 +3,7 @@ const {expect} = require("chai");
 
 //https://docs.klaytn.foundation/smart-contract/precompiled-contracts/precompiled-contracts-previous
 describe("CallContractTest.js Pre Cross Compile Contract  ", function () {
-    this.timeout(2000000)
+    this.timeout(600000)
 
     let contract;
     let contractInfo;

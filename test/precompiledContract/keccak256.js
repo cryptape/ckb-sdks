@@ -4,7 +4,7 @@ const { ethers } = require("hardhat");
 
 describe("keccak256 ", function () {
 
-    this.timeout(100000)
+    this.timeout(600000)
     let contract;
 
     beforeEach(async function () {
