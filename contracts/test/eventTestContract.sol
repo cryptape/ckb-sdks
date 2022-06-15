@@ -18,5 +18,9 @@ contract eventTestContract{
         }
     }
 
+    fallback() external payable {
+
+    }
+
 
 }
