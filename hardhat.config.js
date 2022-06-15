@@ -56,6 +56,10 @@ module.exports = {
             chainId: 71393,
             accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`]
         },
+        gw_alphanet_v1: {
+                url: `https://godwoken-alphanet-v1.ckbapp.dev`,
+                accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`,`0x${PRIVATE_KEY3}`,`0x${PRIVATE_KEY4}`,`0x${PRIVATE_KEY5}`,`0x${PRIVATE_KEY6}`]
+            },
         rinkeby: {
             url: `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`,
             accounts: [`0x${PRIVATE_KEY}`]
@@ -76,8 +80,7 @@ module.exports = {
         // }
     },
     //bsc_test
-    // defaultNetwork: "gw_testnet_v11", //gw_local_kit_net_v1 gw_testnet_v11
-    // defaultNetwork: "gw_testnet_v11",
+    // defaultNetwork: "gw_alphanet_v1", //gw_local_kit_net_v1 gw_testnet_v11
     // defaultNetwork: "rinkeby",
     defaultNetwork: "gw_local_kit_net_v1",
     solidity: {
