@@ -1,8 +1,13 @@
-pragma solidity ^0.8.4;
+pragma solidity ^0.5.4;
 
 contract eventTestContract{
 
     event blockHashEvent(bytes32);
+    function testEvent(uint256 logCount) public {
+        for(uint256 i=0;i<logCount;i++){
+            log0(bytes32(0));
+        }
+    }
 
     function testEvent(uint256 begin,uint rd,uint256 mid ,uint end) public {
 
@@ -17,10 +22,14 @@ contract eventTestContract{
             emit blockHashEvent(bytes32(0));
         }
     }
-
-    fallback() external payable {
-
+    function testLog(uint256 logCount) public {
+        for(uint256 i=0;i<logCount;i++){
+            log0(bytes32(0));
+        }
     }
+
+
+    function() external payable {}
 
 
 }

@@ -150,7 +150,7 @@ describe("Failed commit tx", function () {
             await invoke_before_test_after(contract, [0], 1, true, false)
         })
 
-        it("out of gas tx (https://github.com/RetricSu/godwoken-kicker/issues/279)",async ()=>{
+        it("out of gas tx(max cycles exceeded) (https://github.com/RetricSu/godwoken-kicker/issues/279)",async ()=>{
             let eventTestContractInfo = await ethers.getContractFactory("eventTestContract");
             contract = await eventTestContractInfo.deploy()
             await contract.deployed()
@@ -158,6 +158,15 @@ describe("Failed commit tx", function () {
             let response = await getTxReceipt(ethers.provider,tx.hash,10)
             expect(response.status).to.be.equal(0)
         }).timeout(100000)
+
+        it("out of gas(handle message failed)",async ()=>{
+            let eventTestContractInfo = await ethers.getContractFactory("eventTestContract");
+            let contract = await eventTestContractInfo.deploy()
+            await contract.deployed()
+            let tx = await contract.testLog(300000,{gasLimit:"0x989680"})
+            let response = await getTxReceipt(ethers.provider, tx.hash, 100)
+            expect(response.status).to.be.equal(0)
+        }).timeout(60000)
     })
 
     describe("Assert(0.8.0)", function () {
