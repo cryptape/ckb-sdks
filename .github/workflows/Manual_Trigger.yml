@@ -107,6 +107,12 @@ jobs:
         run: |
           npm install
           npm run ${{ github.event.inputs.TestScript }}
+      - name: check godwoken status
+        if: success() || failure()
+        run: |
+          cd godwoken-kicker
+          ./kicker ps -a
+          cd ../
       - name: Generate report
         if: success() || failure()
         run: |

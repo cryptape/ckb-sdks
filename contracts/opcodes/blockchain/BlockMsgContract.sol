@@ -27,7 +27,7 @@ contract BlockMsgContract {
         return blockhash(number);
     }
 
-    function getBlockHashEventTopre256View() public view returns (bytes32[] memory){
+    function getBlockHashEventTopre256View() public view returns (bytes32[] memory blkHashs,uint256 blockNumber){
         bytes32[] memory blkHashs = new bytes32[](260);
         uint256 beginNum = block.number + 1;
         for (uint256 i = 0; i < 260; i++) {
@@ -36,7 +36,7 @@ contract BlockMsgContract {
             }
             blkHashs[i] = blockhash(beginNum - i);
         }
-        return blkHashs;
+        return (blkHashs,block.number);
     }
 
     function getBlockHash(uint256 number) public {

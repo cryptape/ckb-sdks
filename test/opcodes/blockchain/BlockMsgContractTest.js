@@ -33,19 +33,20 @@ describe("BlockMsgContractTest.js opcode -blockchain -block ", function () {
         }
 
     })
-
     it("Verify the blockhash of the past 256 blocks by eth_call", async () => {
         let receipt = await contract.getBlockHashEventTopre256View()
-        let height = await ethers.provider.getBlockNumber()
-        for (let i = 0; i < receipt.length; i++) {
+        // let height = await ethers.provider.getBlockNumber()
+        let height = receipt.blockNumber
+        console.log("height:",height)
+        for (let i = 0; i < receipt.blkHashs.length; i++) {
             if (height + 1 - i < 0) {
-                expect(receipt[i]).to.be.equal("0x0000000000000000000000000000000000000000000000000000000000000000");
+                expect(receipt.blkHashs[i]).to.be.equal("0x0000000000000000000000000000000000000000000000000000000000000000");
                 continue;
             }
             if (i < 2 || i >= 258) {
-                expect(receipt[i]).to.be.equal("0x0000000000000000000000000000000000000000000000000000000000000000");
+                expect(receipt.blkHashs[i]).to.be.equal("0x0000000000000000000000000000000000000000000000000000000000000000");
             } else {
-                expect(receipt[i]).to.be.not.equal("0x0000000000000000000000000000000000000000000000000000000000000000");
+                expect(receipt.blkHashs[i]).to.be.not.equal("0x0000000000000000000000000000000000000000000000000000000000000000");
             }
         }
 
