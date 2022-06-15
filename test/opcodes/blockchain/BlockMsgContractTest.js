@@ -9,7 +9,7 @@ const {expect} = require("chai");
 // block.number
 // block.timestamp
 describe("BlockMsgContractTest.js opcode -blockchain -block ", function () {
-    this.timeout(1000000)
+    this.timeout(600000)
     let contract;
 
     before(async function () {
@@ -33,13 +33,13 @@ describe("BlockMsgContractTest.js opcode -blockchain -block ", function () {
         }
 
     })
-    it("Verify the blockhash of the past 256 blocks by eth_call", async () => {
+    it("Verify the block hash of the past 256 blocks by eth_call", async () => {
         let receipt = await contract.getBlockHashEventTopre256View()
         // let height = await ethers.provider.getBlockNumber()
         let height = receipt.blockNumber
-        console.log("height:",height)
         for (let i = 0; i < receipt.blkHashs.length; i++) {
-            if (height + 1 - i < 0) {
+            console.log("receipt.blkHashs[i]:",i,receipt.blkHashs[i])
+            if (height.add(1) - i < 0) {
                 expect(receipt.blkHashs[i]).to.be.equal("0x0000000000000000000000000000000000000000000000000000000000000000");
                 continue;
             }
@@ -61,6 +61,12 @@ describe("BlockMsgContractTest.js opcode -blockchain -block ", function () {
             let updateBlockMsgTxReceipt = await tx.wait(2)
             ethCallBlockData = await contract.get_block_data()
             updateBlockMsg = await ethers.provider.getBlock(updateBlockMsgTxReceipt.blockNumber)
+        })
+
+        it("exec update_block_msg",async ()=>{
+            for (let i = 0; i < 100000000000; i++) {
+                await contract.update_block_msg()
+            }
         })
 
 
