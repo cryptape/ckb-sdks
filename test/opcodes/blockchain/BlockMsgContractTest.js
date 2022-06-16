@@ -63,12 +63,6 @@ describe("BlockMsgContractTest.js opcode -blockchain -block ", function () {
             updateBlockMsg = await ethers.provider.getBlock(updateBlockMsgTxReceipt.blockNumber)
         })
 
-        it("exec update_block_msg",async ()=>{
-            for (let i = 0; i < 100000000000; i++) {
-                await contract.update_block_msg()
-            }
-        })
-
 
         it("check blockHash", async () => {
             // updateBlockMsgTxReceipt.blockHash => blockHash(blockNumber-1)
