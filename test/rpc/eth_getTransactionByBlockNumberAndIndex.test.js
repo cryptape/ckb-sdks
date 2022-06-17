@@ -67,12 +67,8 @@ describe("getTransactionByBlockNumberAndIndex", function () {
 
         it("idx out of bound for block num", async () => {
             let blockNum = await ethers.provider.getBlockNumber();
-            let txResponse;
-            do {
-                txResponse = await ethers.provider.getBlock(blockNum)
-                blockNum = blockNum - 1;
-            } while (txResponse.transactions.length < 1)
-            let tx = await ethers.provider.send("eth_getTransactionByBlockNumberAndIndex", [BigInterToHexString(BigNumber.from(blockNum)), BigInterToHexString(BigNumber.from(txResponse.transactions.length + 1))])
+            let txResponse = await ethers.provider.getBlock(blockNum);
+            let tx = await ethers.provider.send("eth_getTransactionByBlockNumberAndIndex", [BigInterToHexString(BigNumber.from(blockNum)), BigInterToHexString(BigNumber.from(txResponse.transactions.length + 11111))])
             expect(tx).to.be.equal(null)
         }).timeout(500000)
 
