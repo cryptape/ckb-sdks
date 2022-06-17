@@ -240,7 +240,7 @@ describe("sendRawTransaction ", function () {
                 "gasPrice": "0x0",
                 "value": "0x5",
             }]);
-            let response = await getTxReceipt(ethers.provider, tx, 10)
+            let response = await getTxReceipt(ethers.provider, tx, 20)
             let afterDeployBalance = await ethers.provider.getBalance(account0Address)
             let contractBalance = await ethers.provider.getBalance(response.contractAddress)
             expect(beforeDeployBalance.sub(BigNumber.from("0x5"))).to.be.equal(afterDeployBalance);
@@ -256,7 +256,7 @@ describe("sendRawTransaction ", function () {
                     "value": "0x5000000000000000000000000000000",
                 }]);
             } catch (e) {
-                expect(e.toString()).to.be.contains("sender doesn't have enough funds to send tx")
+                expect(e.toString()).to.be.include("sender doesn't have enough funds to send tx")
             }
 
         })

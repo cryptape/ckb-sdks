@@ -1,7 +1,9 @@
 const {ethers} = require("hardhat");
-const {BigNumber} = require("ethers");
+const {sendTxToAddBlockNum} = require("./utils/tx.js");
+const {getTxReceipt} = require("./utils/tx");
 
 describe("newFilter", function () {
+    this.timeout(600000)
     let fallbackAndReceiveContract;
     let logContract;
     before(async function () {
@@ -12,32 +14,49 @@ describe("newFilter", function () {
     describe("newFilter",function (){
 
         it("demo", async ()=>{
-            const filterId = await ethers.provider.send("eth_newFilter", [filter]);
+            const filterId = await ethers.provider.send("eth_newFilter", [{}]);
             console.log(filterId);
-            const logs = await provider.send("eth_getFilterChanges", [filterId]);
+            await sendTxToAddBlockNum(ethers.provider, 1)
+            const logs = await ethers.provider.send("eth_getFilterChanges", [filterId]);
             console.log(logs);
         })
 
+        // it("test max",async() =>{
+        //     //deploy contract
+        //     const filterId = await ethers.provider.send("eth_newFilter", [{}]);
+        //
+        //     let contractInfo  = await ethers.getContractFactory("eventTestContract")
+        //     let contract = await   contractInfo.deploy()
+        //     for (let i = 0; i < 100; i++) {
+        //         let tx = await contract.testLog(16000,{gasLimit:"0xb71b00"})
+        //         // await getTxReceipt(ethers.provider,tx.hash,100)
+        //     }
+        //     const logs = await ethers.provider.send("eth_getFilterChanges", [filterId]);
+        //
+        //     console.log(logs)
+        //
+        // })
+
+        // it("test max1",async() =>{
+        //     //deploy contract
+        //     const filterId = await ethers.provider.send("eth_newFilter", [{}]);
+        //
+        //     let contractInfo  = await ethers.getContractFactory("eventTestContract")
+        //     let contract = await  contractInfo.deploy()
+        //     await contract.deployed()
+        //     for (let i = 0; i < 100; i++) {
+        //         try {
+        //             let tx = await contract.transferAttack(5000,{gasLimit:"0xb71b00"})
+        //         }catch (e){}
+        //     }
+        //     const logs = await ethers.provider.send("eth_getFilterChanges", [filterId]);
+        //     console.log(logs)
+        //
+        // })
+
     })
 
-    describe("from",function (){
-        it("demo",async ()=>{
-            let BeginBlkNum = await ethers.provider.getBlockNumber();
-            const filterId = await ethers.provider.send("eth_newFilter", [{}]);
-            // getTxCount(ethers.provider,ethers.provider.getSigner().getAddress())
-            await sendTxToAddBlockNum(ethers.provider,3)
-            const logs = await ethers.provider.send("eth_getFilterChanges", [filterId]);
-            let endBlkNum = await ethers.provider.getBlockNumber();
 
-            // console.log("logs:",logs)
-            console.log("begin blkNum:",BeginBlkNum.toString())
-            console.log("end blkNum:",endBlkNum.toString())
-            console.log("=====eth_getFilterChanges==========")
-            for (let i = 0; i < logs.length; i++) {
-                console.log("blockNumber:",BigNumber.from(logs[i].blockNumber.toString()).toString(),"blkIdx:",logs[i].transactionIndex,"logIndex:",logs[i].logIndex)
-            }
-        }).timeout(100000)
-    })
 
     describe("toBlock",function (){
 

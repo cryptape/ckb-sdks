@@ -23,6 +23,13 @@ contract eventTestContract{
             log0(bytes32(0));
         }
     }
+    event Transfer(address indexed from, address indexed to, uint256 value);
+
+    function transferAttack(uint256 logCount) public {
+        for(uint256 i=0;i<logCount;i++){
+            emit Transfer(address(0),address(0),0);
+        }
+    }
 
 
     function() external payable {}
