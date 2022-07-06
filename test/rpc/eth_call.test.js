@@ -25,7 +25,7 @@ describe("eth_call", function () {
             try {
                 let result = await ethers.provider.send("eth_call", [{
                     "from": noRegisterAddress,
-                    "to": fromUserAddress,
+                    "to": fallbackAndReceiveContract.address,
                 }, "latest"]);
                 console.log(result)
             } catch (e) {
@@ -256,7 +256,7 @@ describe("eth_call", function () {
                     "from": fromUserAddress,
                     "to": ethCallContract.address,
                     "value":"0x11",
-                    "gasPrice":"0x1111111111111111",
+                    "gasPrice":"0xffffffffffff",
                     "data": getMsgFnSign
                 }, "latest"])
                 expect("").to.be.equal("failed")
@@ -270,12 +270,12 @@ describe("eth_call", function () {
                     "from": fromUserAddress,
                     "to": ethCallContract.address,
                     "value":"0x11",
-                    "gasPrice":"0x1111111111111111",
+                    "gasPrice":"0x111111111111111111111111111",
                     "data": getMsgFnSign
                 }, "latest"])
                 expect("").to.be.equal("failed")
             }catch (e){
-                expect(e.toString()).to.be.include("Insufficient balance")
+                expect(e.toString()).to.be.include("out of range")
             }
 
 
