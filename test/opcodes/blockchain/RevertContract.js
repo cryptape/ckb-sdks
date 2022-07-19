@@ -14,15 +14,15 @@ describe("RevertContract.js opcode ", function () {
         await contract.deployed();
     });
 
-    it("revert1View 1", async () => {
+    it("revert1View 1(https://github.com/nervosnetwork/godwoken-web3/issues/423)", async () => {
         try {
             await contract.revert1View();
             expect("").to.be.equal("failed")
         } catch (e) {
-            expect(e.toString()).to.be.contains("1234112341123411234112341123411234112")
+            expect(e.toString()).to.be.include("1234112341123411234112341123411234112")
         }
     })
-    it("revert msg", async () => {
+    it("revert msg(https://github.com/nervosnetwork/godwoken-web3/issues/423)", async () => {
         let msg = "";
         for (let i = 0; i < 1000; i++) {
             msg = msg + "ssss"
@@ -31,6 +31,8 @@ describe("RevertContract.js opcode ", function () {
             await contract.revertMsg(msg);
             expect("").to.be.equal("failed")
         } catch (e) {
+            console.log('------------------')
+            console.log(e)
             expect(e.toString()).to.be.contains("sssssssssssssssssssssssssssssssssssss")
 
         }
@@ -42,6 +44,7 @@ describe("RevertContract.js opcode ", function () {
         try {
             await contract.testRequireBalance()
         } catch (e) {
+            console.log('toString:',e.toString())
             expect(e.toString()).to.be.contains("ERC20: transfer amount exceeds balance")
             return
         }

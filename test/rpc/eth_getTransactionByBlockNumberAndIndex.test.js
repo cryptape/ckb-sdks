@@ -15,22 +15,27 @@ describe("getTransactionByBlockNumberAndIndex", function () {
     describe("tag", async () => {
         it("not exist block num(https://github.com/nervosnetwork/godwoken-web3/issues/269)", async () => {
             let num = await ethers.provider.getBlockNumber()
-            let response = await ethers.provider.send("eth_getTransactionByBlockNumberAndIndex", [BigInterToHexString(BigNumber.from(num + 1)), "0x0"])
+            let response = await ethers.provider.send("eth_getTransactionByBlockNumberAndIndex", [BigInterToHexString(BigNumber.from(num + 100)), "0x0"])
             console.log("eth_getTransactionByBlockHashAndIndex response:", response)
             expect(response).to.be.equal(null)
         }).timeout(50000)
 
         it("not exist block num overflow  larger than int64(https://github.com/nervosnetwork/godwoken-web3/issues/269)", async () => {
-            let response = await ethers.provider.send("eth_getTransactionByBlockNumberAndIndex", ["0xffffffffffffffff", "0x0"])
-            console.log("eth_getTransactionByBlockHashAndIndex response:", response)
-            expect(response).to.be.equal(null)
+            try {
+                await ethers.provider.send("eth_getTransactionByBlockNumberAndIndex", ["0xffffffffffffffff", "0x0"])
+            }catch (e){
+                return
+            }
         }).timeout(50000)
 
         it("not exist block num overflow  larger than 64 bits(https://github.com/nervosnetwork/godwoken-web3/issues/269)", async () => {
 
-            let response = await ethers.provider.send("eth_getTransactionByBlockNumberAndIndex", ["0xffffffffffffffffff", "0x0"])
-            console.log("eth_getTransactionByBlockHashAndIndex response:", response)
-            expect(response).to.be.equal(null)
+            try {
+                await ethers.provider.send("eth_getTransactionByBlockNumberAndIndex", ["0xffffffffffffffffff", "0x0"])
+            }catch (e){
+                return
+            }
+            expect('').to.be.equal('failed')
         }).timeout(50000)
     })
 

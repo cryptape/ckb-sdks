@@ -13,13 +13,6 @@ async function getTxReceipt(provider, txHash, count) {
             return response
         }
         await sleep(2000)
-
-        // if (response.from !== "0x0000000000000000000000000000000000000000") {
-        //     return response
-        // }
-        // if (!(response.failed_reason === undefined)) {
-        //     return response
-        // }
     }
     return response
 }
@@ -92,7 +85,6 @@ async function sendRandomTx(provider) {
 
 async function sleep(timeOut){
     await new Promise(r => setTimeout(r, timeOut));
-
 }
 
 

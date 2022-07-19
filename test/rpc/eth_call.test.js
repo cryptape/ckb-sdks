@@ -3,7 +3,7 @@ const {expect} = require("chai");
 const {getGasPrice} = require("./utils/tx.js");
 const {BigNumber} = require("ethers"); // NodeJS
 
-const noRegisterAddress = "0xA768cB32724eE05cd9A4d6fd5818E77c269a45Ed"
+const noRegisterAddress = "0xA768cB32724eE05cd9A4d6fd5818E77c269a4511"
 describe("eth_call", function () {
     this.timeout(600000)
     let fallbackAndReceiveContract;
@@ -65,7 +65,7 @@ describe("eth_call", function () {
 
     describe("from, to ,value,data", async () => {
 
-        it("from is contract address", async () => {
+        it("from is contract address(https://github.com/nervosnetwork/godwoken-web3/pull/416)", async () => {
             let result = await ethers.provider.send("eth_call", [{
                 "from": fallbackAndReceiveContract.address,
                 "to": fallbackAndReceiveContract.address,
@@ -228,13 +228,15 @@ describe("eth_call", function () {
                     "from": fromUserAddress,
                     "to": ethCallContract.address,
                     "value":"0x11",
-                    "gas": "0x11",
+                    "gas": "0x5248",
                     "data": getMsgFnSign
                 }, "latest"])
-                expect("").to.be.equal("failed")
             }catch (e){
-                expect(e.toString()).to.be.include("invalid exit code -93")
+                expect(e.toString()).to.be.include("out_of_gas")
+                return
             }
+            expect("").to.be.equal("failed")
+
         })
 
         it("gasPrice",async ()=>{
@@ -256,13 +258,15 @@ describe("eth_call", function () {
                     "from": fromUserAddress,
                     "to": ethCallContract.address,
                     "value":"0x11",
-                    "gasPrice":"0xffffffffffff",
+                    "gasPrice":"0xffffffffffffffffffff",
                     "data": getMsgFnSign
                 }, "latest"])
-                expect("").to.be.equal("failed")
             }catch (e){
-                expect(e.toString()).to.be.include("Insufficient balance")
+                expect(e.toString()).to.be.include("insufficient")
+                return
             }
+            expect("").to.be.equal("failed")
+
         })
         it("gasPrice- out of very big",async ()=>{
             try {
@@ -270,13 +274,13 @@ describe("eth_call", function () {
                     "from": fromUserAddress,
                     "to": ethCallContract.address,
                     "value":"0x11",
-                    "gasPrice":"0x111111111111111111111111111",
+                    "gasPrice":"0x1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
                     "data": getMsgFnSign
                 }, "latest"])
-                expect("").to.be.equal("failed")
             }catch (e){
-                expect(e.toString()).to.be.include("out of range")
+                return
             }
+            expect("").to.be.equal("failed")
 
 
         })
