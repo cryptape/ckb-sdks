@@ -73,10 +73,11 @@ async function getTxCount(provider, address) {
 }
 
 async function sendRandomTx(provider) {
+    let from = (await ethers.getSigners())[1].address
     let logContract = await ethers.getContractFactory("opcode_assembly_log");
     try {
         await provider.send("eth_sendTransaction", [{
-            "from": "0x40711aDc577DE17232DD6F997022F68BE6BE8560",
+            "from": from,
             "data": logContract.bytecode
         }]);
     } catch (e) {

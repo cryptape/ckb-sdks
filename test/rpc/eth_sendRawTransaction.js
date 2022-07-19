@@ -3,13 +3,16 @@ const {expect} = require("chai");
 const {getGasPrice, getTxReceipt, BigInterToHexString} = require("./utils/tx.js");
 const {BigNumber} = require("ethers");
 
+
 describe("sendRawTransaction ", function () {
 
     this.timeout(600000)
+    let registerAccountAddress;
     let contract;
     let fallbackAndReceiveContract;
     let logContract;
     before(async function () {
+        registerAccountAddress = (await ethers.getSigners())[0].address
         fallbackAndReceiveContract = await ethers.getContractFactory("fallbackAndReceive");
         logContract = await ethers.getContractFactory("LogContract");
         console.log('logContract.bytecode:', logContract.bytecode)
@@ -22,8 +25,8 @@ describe("sendRawTransaction ", function () {
             console.log("gasPrice:", gasPrice)
             try {
                 await ethers.provider.send("eth_sendTransaction", [{
-                    "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
-                    "to": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                    "from": registerAccountAddress,
+                    "to": registerAccountAddress,
                     "gas": "0x76c000",
                     "gasPrice": gasPrice,
                     "value": "0x9184e72a",
@@ -38,7 +41,7 @@ describe("sendRawTransaction ", function () {
         it("to is not exist Address => to id not found by address ", async () => {
             try {
                 await ethers.provider.send("eth_sendTransaction", [{
-                    "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                    "from": registerAccountAddress,
                     "to": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d71",
                     "gas": "0xffffff",
                     "gasPrice": "0x9184e72a000",
@@ -56,7 +59,7 @@ describe("sendRawTransaction ", function () {
             contract = await fallbackAndReceiveContract.deploy();
             await contract.deployed();
             let tx = await ethers.provider.send("eth_sendTransaction", [{
-                "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                "from": registerAccountAddress,
                 "to": contract.address,
                 "gasPrice": gasPrice,
                 "value": "0x1",
@@ -71,7 +74,7 @@ describe("sendRawTransaction ", function () {
             let gasPrice = await getGasPrice(ethers.provider);
 
             let tx = await ethers.provider.send("eth_sendTransaction", [{
-                "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                "from": registerAccountAddress,
                 "gas": "0x76c000",
                 "gasPrice": gasPrice,
                 "data": fallbackAndReceiveContract.bytecode
@@ -86,7 +89,7 @@ describe("sendRawTransaction ", function () {
             let gasPrice = await getGasPrice(ethers.provider);
             try {
                 await ethers.provider.send("eth_sendTransaction", [{
-                    "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                    "from": registerAccountAddress,
                     "to": "0x0000000000000000000000000000000000000000",
                     "gas": "0x76c000",
                     "gasPrice": gasPrice,
@@ -108,7 +111,7 @@ describe("sendRawTransaction ", function () {
 
             console.log("gasPrice:", gasPrice._hex)
             let tx = await ethers.provider.send("eth_sendTransaction", [{
-                "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                "from": registerAccountAddress,
                 "gasPrice": "0x1",
                 "data": fallbackAndReceiveContract.bytecode
             }]);
@@ -139,7 +142,7 @@ describe("sendRawTransaction ", function () {
             // console.log("gasPrice:",gasPrice._hex)
             try {
                 let tx = await ethers.provider.send("eth_sendTransaction", [{
-                    // "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                    // "from": registerAccountAddress,
                     "gas": "0x1",
                     // "gasPrice": "0x1",
                     "data": fallbackAndReceiveContract.bytecode
