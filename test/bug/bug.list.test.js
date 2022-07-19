@@ -23,8 +23,8 @@ describe("bug", function () {
         // one thread send tx
         let tx = sendTx(contract, 10)
         // one thread invoke eth_call
-        let ethCallTx = eth_call(contract, 400)
-        let eth_gasTx = eth_gas(contract, 400)
+        let ethCallTx = eth_call(contract, 70)
+        let eth_gasTx = eth_gas(contract, 70)
 
         await ethCallTx
         await eth_gasTx
@@ -206,7 +206,7 @@ describe("bug", function () {
         expect("").to.be.contains("failed")
     })
 
-    describe("Revert did not return an error message(https://github.com/nervosnetwork/godwoken-web3/issues/293)", function () {
+    describe("Revert did not return an error message(https://github.com/nervosnetwork/godwoken-web3/issues/293)(https://github.com/nervosnetwork/godwoken-web3/issues/423)", function () {
         //https://github.com/nervosnetwork/godwoken-web3/issues/293
 
         it("error RpcError: Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from, requesting data from a block number that does not exist, or querying a node which is not fully synced. RpcError: Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from, " +
@@ -219,8 +219,12 @@ describe("bug", function () {
             try {
                  await contract.testEmpty()
             } catch (e) {
-                expect(e.toString()).to.be.contains("reverted with custom error")
+                expect(e.data).to.be.include('0x3db2a12a')
+                expect(e.errorName).to.be.equal('Empty')
+                // expect(e.toString()).to.be.contains("reverted with custom error")
+                return
             }
+            expect('').to.be.include('failed')
         })
 
         it("overflow", async () => {
@@ -234,9 +238,34 @@ describe("bug", function () {
             try {
                 await contract.addError(1);
             } catch (e) {
-                expect(e.toString()).to.be.contains("reverted with panic code 0x11")
+                // expect(e.toString()).to.be.contains("reverted with panic code 0x11")
+                expect(e.errorName).to.be.include('Panic')
+                expect(e.errorArgs[0]).to.be.equal('0x11')
+                return
             }
+            expect('').to.be.include('failed')
         })
+
+    })
+
+    it("revert msg(https://github.com/nervosnetwork/godwoken-web3/issues/423)", async () => {
+        let contractInfo = await ethers.getContractFactory("RevertContract");
+        let contract = await contractInfo.deploy();
+        await contract.deployed();
+
+        let msg = "";
+        for (let i = 0; i < 1000; i++) {
+            msg = msg + "ssss"
+        }
+        try {
+            // invoke method that contains revert
+            await contract.revertMsg(msg);
+            expect("").to.be.equal("failed")
+        } catch (e) {
+            expect(e.errorName).to.be.equal('Error')
+            expect(e.args[0]).to.be.include('ssssssssssssssssssssssssssssss')
+        }
+
     })
 
     it("cross call msg.data return REVERT (https://github.com/nervosnetwork/godwoken-polyjuice/issues/144)", async () => {

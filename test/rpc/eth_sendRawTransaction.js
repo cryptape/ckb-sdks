@@ -3,13 +3,16 @@ const {expect} = require("chai");
 const {getGasPrice, getTxReceipt, BigInterToHexString} = require("./utils/tx.js");
 const {BigNumber} = require("ethers");
 
+
 describe("sendRawTransaction ", function () {
 
     this.timeout(600000)
+    let registerAccountAddress;
     let contract;
     let fallbackAndReceiveContract;
     let logContract;
     before(async function () {
+        registerAccountAddress = (await ethers.getSigners())[0].address
         fallbackAndReceiveContract = await ethers.getContractFactory("fallbackAndReceive");
         logContract = await ethers.getContractFactory("LogContract");
         console.log('logContract.bytecode:', logContract.bytecode)
@@ -22,8 +25,8 @@ describe("sendRawTransaction ", function () {
             console.log("gasPrice:", gasPrice)
             try {
                 await ethers.provider.send("eth_sendTransaction", [{
-                    "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
-                    "to": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                    "from": registerAccountAddress,
+                    "to": registerAccountAddress,
                     "gas": "0x76c000",
                     "gasPrice": gasPrice,
                     "value": "0x9184e72a",
@@ -38,7 +41,7 @@ describe("sendRawTransaction ", function () {
         it("to is not exist Address => to id not found by address ", async () => {
             try {
                 await ethers.provider.send("eth_sendTransaction", [{
-                    "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                    "from": registerAccountAddress,
                     "to": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d71",
                     "gas": "0xffffff",
                     "gasPrice": "0x9184e72a000",
@@ -56,7 +59,7 @@ describe("sendRawTransaction ", function () {
             contract = await fallbackAndReceiveContract.deploy();
             await contract.deployed();
             let tx = await ethers.provider.send("eth_sendTransaction", [{
-                "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                "from": registerAccountAddress,
                 "to": contract.address,
                 "gasPrice": gasPrice,
                 "value": "0x1",
@@ -71,7 +74,7 @@ describe("sendRawTransaction ", function () {
             let gasPrice = await getGasPrice(ethers.provider);
 
             let tx = await ethers.provider.send("eth_sendTransaction", [{
-                "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                "from": registerAccountAddress,
                 "gas": "0x76c000",
                 "gasPrice": gasPrice,
                 "data": fallbackAndReceiveContract.bytecode
@@ -86,7 +89,7 @@ describe("sendRawTransaction ", function () {
             let gasPrice = await getGasPrice(ethers.provider);
             try {
                 await ethers.provider.send("eth_sendTransaction", [{
-                    "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                    "from": registerAccountAddress,
                     "to": "0x0000000000000000000000000000000000000000",
                     "gas": "0x76c000",
                     "gasPrice": gasPrice,
@@ -108,7 +111,7 @@ describe("sendRawTransaction ", function () {
 
             console.log("gasPrice:", gasPrice._hex)
             let tx = await ethers.provider.send("eth_sendTransaction", [{
-                "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                "from": registerAccountAddress,
                 "gasPrice": "0x1",
                 "data": fallbackAndReceiveContract.bytecode
             }]);
@@ -127,8 +130,7 @@ describe("sendRawTransaction ", function () {
                 }]);
                 console.log("tx:", tx)
             } catch (e) {
-                console.log("e:", e)
-                expect(e.toString()).to.be.contains("gas")
+                expect(e.toString()).to.be.contains("Gas")
                 return
             }
             expect("").to.be.include("expected throw out of gas")
@@ -140,7 +142,7 @@ describe("sendRawTransaction ", function () {
             // console.log("gasPrice:",gasPrice._hex)
             try {
                 let tx = await ethers.provider.send("eth_sendTransaction", [{
-                    // "from": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d73",
+                    // "from": registerAccountAddress,
                     "gas": "0x1",
                     // "gasPrice": "0x1",
                     "data": fallbackAndReceiveContract.bytecode
@@ -148,7 +150,7 @@ describe("sendRawTransaction ", function () {
                 console.log("tx:", tx)
             } catch (e) {
                 console.log("e:", e)
-                expect(e.toString()).to.be.contains("gas")
+                expect(e.toString()).to.be.contains("Gas")
                 return
             }
             expect("").to.be.include("expected throw out of gas")
@@ -192,10 +194,17 @@ describe("sendRawTransaction ", function () {
     describe("gasPrice", function () {
 
         it("gasPrice is zero => to do( wait ) invoke success", async () => {
-            await ethers.provider.send("eth_sendTransaction", [{
-                "gasPrice": "0x0",
-                "data": fallbackAndReceiveContract.bytecode
-            }]);
+            try {
+                await ethers.provider.send("eth_sendTransaction", [{
+                    "gasPrice": "0x0",
+                    "data": fallbackAndReceiveContract.bytecode
+                }]);
+            }catch (e){
+                expect(e.message).to.be.include('price')
+                return
+            }
+            expect('').to.be.equal('failed')
+
         }).timeout(50000)
 
         it("gasPrice is very max  => sender doesn't have enough funds to send tx", async () => {
@@ -210,7 +219,7 @@ describe("sendRawTransaction ", function () {
                 let txInfo = await ethers.provider.getTransaction(tx)
                 console.log("txInfo:", txInfo)
             } catch (e) {
-                expect(e.toString()).to.be.include("Insufficient balance")
+                expect(e.toString()).to.be.include("insufficient balance")
                 return
             }
             expect("").to.be.contains("expected throw out of gas")
@@ -223,13 +232,15 @@ describe("sendRawTransaction ", function () {
         it("value is 0=> normal tx", async () => {
             let account0Address = await ethers.provider.getSigner(0).getAddress()
             let beforeDeployBalance = await ethers.provider.getBalance(account0Address)
-            await ethers.provider.send("eth_sendTransaction", [{
+            let tx = await ethers.provider.send("eth_sendTransaction", [{
                 "data": fallbackAndReceiveContract.bytecode,
-                "gasPrice": "0x0",
+                "gasPrice": "0x1",
                 "value": null,
             }]);
+            let response = await getTxReceipt(ethers.provider, tx, 20)
+
             let afterDeployBalance = await ethers.provider.getBalance(account0Address)
-            expect(beforeDeployBalance).to.be.equal(afterDeployBalance);
+            expect(beforeDeployBalance.sub(response.gasUsed)).to.be.equal(afterDeployBalance);
         }).timeout(40000)
 
         it("value is 500 =>  to+500 ,from -500", async () => {
@@ -237,13 +248,13 @@ describe("sendRawTransaction ", function () {
             let beforeDeployBalance = await ethers.provider.getBalance(account0Address)
             let tx = await ethers.provider.send("eth_sendTransaction", [{
                 "data": logContract.bytecode,
-                "gasPrice": "0x0",
+                "gasPrice": "0x1",
                 "value": "0x5",
             }]);
             let response = await getTxReceipt(ethers.provider, tx, 20)
             let afterDeployBalance = await ethers.provider.getBalance(account0Address)
             let contractBalance = await ethers.provider.getBalance(response.contractAddress)
-            expect(beforeDeployBalance.sub(BigNumber.from("0x5"))).to.be.equal(afterDeployBalance);
+            expect(beforeDeployBalance.sub(BigNumber.from("0x5")).sub(response.gasUsed)).to.be.equal(afterDeployBalance);
             expect(contractBalance).to.be.equal(BigNumber.from("0x5"));
         }).timeout(40000)
 
@@ -256,8 +267,10 @@ describe("sendRawTransaction ", function () {
                     "value": "0x5000000000000000000000000000000",
                 }]);
             } catch (e) {
-                expect(e.toString()).to.be.include("sender doesn't have enough funds to send tx")
+                expect(e.toString()).to.be.include("insufficient")
+                return
             }
+            expect('').to.be.equal('failed')
 
         })
     })

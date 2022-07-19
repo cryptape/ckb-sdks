@@ -35,7 +35,6 @@ describe("Failed commit tx", function () {
         failedContract070 = await prepareFailedTxContract("contracts/failedTx/failedTxContract0.7.0.sol:FailedTxContract")
         failedContract080 = await prepareFailedTxContract("contracts/failedTx/failedTxContract.0.8.4.sol:FailedTxContract")
 
-
     });
 
     it("normal tx will change the world(0.7.0)", async () => {
@@ -118,7 +117,7 @@ describe("Failed commit tx", function () {
             // transfer balance > self balance
             let balance = await ethers.provider.getBalance(ethers.provider.getSigner(0).getAddress())
             let beforeTransferProxyCkbBalance = await ethers.provider.getBalance(ckbProxyContract.address)
-            let tx = await ckbProxyContract.transfer(ckbProxyContract.address, balance)
+            let tx = await ckbProxyContract.transfer(ckbProxyContract.address, balance,{ gasLimit: 1000000})
             await checkResponseOfFailedTx(tx.hash, false)
 
             // check balance not mod

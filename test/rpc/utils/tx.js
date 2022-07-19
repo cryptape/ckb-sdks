@@ -13,13 +13,6 @@ async function getTxReceipt(provider, txHash, count) {
             return response
         }
         await sleep(2000)
-
-        // if (response.from !== "0x0000000000000000000000000000000000000000") {
-        //     return response
-        // }
-        // if (!(response.failed_reason === undefined)) {
-        //     return response
-        // }
     }
     return response
 }
@@ -80,10 +73,11 @@ async function getTxCount(provider, address) {
 }
 
 async function sendRandomTx(provider) {
+    let from = (await ethers.getSigners())[1].address
     let logContract = await ethers.getContractFactory("opcode_assembly_log");
     try {
         await provider.send("eth_sendTransaction", [{
-            "from": "0x40711aDc577DE17232DD6F997022F68BE6BE8560",
+            "from": from,
             "data": logContract.bytecode
         }]);
     } catch (e) {
@@ -92,7 +86,6 @@ async function sendRandomTx(provider) {
 
 async function sleep(timeOut){
     await new Promise(r => setTimeout(r, timeOut));
-
 }
 
 

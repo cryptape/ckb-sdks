@@ -236,9 +236,9 @@ describe("type  max min data test",function (){
                 await contract.pushUnFixedAByte(1);
                 console.log("The Bytes min length is :",await contract.getbBytes2Length());
             }catch (e){
-                expect(e.toString()).to.be.include("out_of_gas")
+                return
             }
-
+            expect('').to.be.equal('failed')
         }).timeout(145000)
 
         it("typeBytes 3:", async () => {
