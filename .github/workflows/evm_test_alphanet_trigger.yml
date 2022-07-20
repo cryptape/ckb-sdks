@@ -1,4 +1,4 @@
-name: evm_trigger_test
+name: evm_trigger_alphanet_test
 on:
   # 手动触发事件
   workflow_dispatch:
