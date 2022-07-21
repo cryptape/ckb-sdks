@@ -1,7 +1,7 @@
 const {ethers} = require("hardhat");
 const {expect} = require("chai");
 
-const noRegisterAddress = "0xA768cB32724eE05cd9A4d6fd5818E77c269a45Ed"
+const noRegisterAddress = "0xA168cB32724eE05cd9A4d6fd5818E77c269a45E1"
 describe("estimateGas  ", function () {
     this.timeout(600000)
     let fallbackAndReceiveContract;
@@ -16,11 +16,13 @@ describe("estimateGas  ", function () {
     describe("tx.from", async function () {
         it("from address not exist = > from id not found", async () => {
             try {
-                await ethers.provider.send("eth_estimateGas", [{
+                let result = await ethers.provider.send("eth_estimateGas", [{
                     "from": noRegisterAddress,
                     "data": logContract.bytecode,
                 }]);
+                console.log('result:',result)
             } catch (e) {
+                console.log('e:tostring:',e.toString())
                 expect(e.toString()).to.be.contains("from id not found")
                 return
             }
