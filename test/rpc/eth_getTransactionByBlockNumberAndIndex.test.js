@@ -13,7 +13,7 @@ describe("getTransactionByBlockNumberAndIndex", function () {
     });
 
     describe("tag", async () => {
-        it("not exist block num(https://github.com/nervosnetwork/godwoken-web3/issues/269)", async () => {
+        it.skip("not exist block num(https://github.com/nervosnetwork/godwoken-web3/issues/269)", async () => {
             let num = await ethers.provider.getBlockNumber()
             let response = await ethers.provider.send("eth_getTransactionByBlockNumberAndIndex", [BigInterToHexString(BigNumber.from(num + 100)), "0x0"])
             console.log("eth_getTransactionByBlockHashAndIndex response:", response)
@@ -77,7 +77,7 @@ describe("getTransactionByBlockNumberAndIndex", function () {
             expect(tx).to.be.equal(null)
         }).timeout(500000)
 
-        it("idx out of bound for block num overflow", async () => {
+        it.skip("idx out of bound for block num overflow", async () => {
             let blockNum = await ethers.provider.getBlockNumber();
             let txResponse;
             do {

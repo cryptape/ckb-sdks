@@ -14,7 +14,7 @@ describe("newPendingTransactionFilter", function () {
 
     describe("demo", function () {
 
-        it("eth_getFilterChanges query filterId from eth_newPendingTransactionFilter inconsistent with other chains(https://github.com/nervosnetwork/godwoken-web3/issues/272)",async ()=>{
+        it.skip("eth_getFilterChanges query filterId from eth_newPendingTransactionFilter inconsistent with other chains(https://github.com/nervosnetwork/godwoken-web3/issues/272)",async ()=>{
             let  filterId = await ethers.provider.send("eth_newPendingTransactionFilter",[]);
             await sendTxCount(ethers.provider,10)
             const logs = await ethers.provider.send("eth_getFilterChanges", [filterId]);

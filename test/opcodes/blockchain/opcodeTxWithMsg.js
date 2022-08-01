@@ -13,9 +13,9 @@ describe("opcodeTxWithMsg.js opcode -tx msg ", function () {
     let contract2NoValue;
     before(async function () {
         const blockInfoContract = await ethers.getContractFactory("opcodeTxWithMsg");
-        contractWithValue = await blockInfoContract.deploy({value: 10n, gasPrice: 90000000001111n});
+        contractWithValue = await blockInfoContract.deploy({value: 10n, gasPrice: 901111n});
         const blockInfoContract2 = await ethers.getContractFactory("opcodeTxWithMsg");
-        contract2NoValue = await blockInfoContract2.deploy({gasPrice: 90000000001112n});
+        contract2NoValue = await blockInfoContract2.deploy({gasPrice: 901112n});
         await contractWithValue.deployed();
         await contract2NoValue.deployed();
     });
@@ -84,8 +84,8 @@ describe("opcodeTxWithMsg.js opcode -tx msg ", function () {
         let txDataNoValue
 
         before(async function () {
-            txWithValue = await contractWithValue.updateMsgAndTxData({gasPrice: 90000000001234});
-            txWithNoValue = await contract2NoValue.updateMsgAndTxData({gasPrice: 90000000000000});
+            txWithValue = await contractWithValue.updateMsgAndTxData({gasPrice: 901234});
+            txWithNoValue = await contract2NoValue.updateMsgAndTxData({gasPrice: 900000});
 
             receiptWithValue = await txWithValue.wait();
             msgDatWithValue = await contractWithValue.msgData();
