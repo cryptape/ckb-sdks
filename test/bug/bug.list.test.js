@@ -206,7 +206,7 @@ describe("bug", function () {
         expect("").to.be.contains("failed")
     })
 
-    describe("Revert did not return an error message(https://github.com/nervosnetwork/godwoken-web3/issues/293)(https://github.com/nervosnetwork/godwoken-web3/issues/423)", function () {
+    describe.skip("Revert did not return an error message(https://github.com/nervosnetwork/godwoken-web3/issues/293)(https://github.com/nervosnetwork/godwoken-web3/issues/423)", function () {
         //https://github.com/nervosnetwork/godwoken-web3/issues/293
 
         it("error RpcError: Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from, requesting data from a block number that does not exist, or querying a node which is not fully synced. RpcError: Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from, " +
@@ -248,7 +248,7 @@ describe("bug", function () {
 
     })
 
-    it("revert msg(https://github.com/nervosnetwork/godwoken-web3/issues/423)", async () => {
+    it.skip("revert msg(https://github.com/nervosnetwork/godwoken-web3/issues/423)", async () => {
         let contractInfo = await ethers.getContractFactory("RevertContract");
         let contract = await contractInfo.deploy();
         await contract.deployed();
