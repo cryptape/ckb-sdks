@@ -15,18 +15,12 @@ describe("estimateGas  ", function () {
 
     describe("tx.from", async function () {
         it("from address not exist = > from id not found", async () => {
-            try {
                 let result = await ethers.provider.send("eth_estimateGas", [{
                     "from": noRegisterAddress,
                     "data": logContract.bytecode,
                 }]);
                 console.log('result:',result)
-            } catch (e) {
-                console.log('e:tostring:',e.toString())
-                expect(e.toString()).to.be.contains("from id not found")
-                return
-            }
-            expect("").to.be.contains("failed")
+            expect(result).to.be.include('0x')
         })
     })
 
