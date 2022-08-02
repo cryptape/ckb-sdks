@@ -22,17 +22,11 @@ describe("eth_call", function () {
 
     describe("tx.from", async function () {
         it("from address not exist = > from id not exist ", async () => {
-            try {
                 let result = await ethers.provider.send("eth_call", [{
                     "from": noRegisterAddress,
                     "to": fallbackAndReceiveContract.address,
                 }, "latest"]);
-                console.log(result)
-            } catch (e) {
-                expect(e.toString()).to.be.contains("from id not found")
-                return
-            }
-            expect("").to.be.equal("failed")
+                expect(result).to.be.equal('0x')
         })
     })
 
