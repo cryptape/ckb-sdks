@@ -7,13 +7,14 @@ const {BigNumber} = require("ethers");
 describe("bug", function () {
     this.timeout(600000)
     it("out of gas tx(https://github.com/RetricSu/godwoken-kicker/issues/279)", async () => {
+
         let eventTestContractInfo = await ethers.getContractFactory("eventTestContract");
         let contract = await eventTestContractInfo.deploy()
         await contract.deployed()
         let tx = await contract.testEvent(2, 7, 1, 17500, {gasLimit: "0x989680"})
-        let response = await getTxReceipt(ethers.provider, tx.hash, 10)
+        let response = await getTxReceipt(ethers.provider, tx.hash, 100)
         expect(response.status).to.be.equal(0)
-    }).timeout(60000)
+    }).timeout(200000)
 
     it("eth_call  Backend must update nonce(https://github.com/nervosnetwork/godwoken-web3/issues/398)", async () => {
         // deploy contract
@@ -290,6 +291,53 @@ describe("bug", function () {
         let tx = await ccCallContract.callData(ccContract.address, 1, "1234")
         let response = await tx.wait();
         expect(response.status).to.be.equal(1)
+
+    })
+
+    describe("check `tx_index`, `cumulative_gas_used`, `log.transaction_index`(https://github.com/nervosnetwork/godwoken-web3/pull/502#event-7220911323)",function (){
+
+        let checkBlock;
+        before(async function () {
+            // send tx add block
+            await sendTxToAddBlockNum(ethers.provider,1)
+            // get block that tx > 2
+            let latestBlkNum = await ethers.provider.getBlockNumber()
+            for (let i = latestBlkNum; i > 0 ; i++) {
+                let block = await ethers.provider.getBlockWithTransactions(latestBlkNum)
+                if (block.transactions.length>=2){
+                    checkBlock = block
+                    return
+                }
+            }
+            expect('').to.be.equal('get  block that tx > 2 failed ')
+        });
+
+        it('check `tx_index`,should tx_index == tx in block index',async ()=>{
+            console.log('!!!!')
+            for (let i = 0; i < checkBlock.transactions.length; i++) {
+                let tx = checkBlock.transactions[i]
+                expect(tx.transactionIndex).to.be.equal(i)
+            }
+        })
+
+        it('check `cumulative_gas_used`, should  cumulative_gas_used = pre cumulative_gas_used + current idx tx.gas',async ()=>{
+            let blockGasTotalUsed = BigNumber.from(0)
+            for (let i = 0; i < checkBlock.transactions.length; i++) {
+                let txReceipt = await getTxReceipt(ethers.provider,checkBlock.transactions[i].hash,20)
+                blockGasTotalUsed = blockGasTotalUsed.add(txReceipt.gasUsed)
+                expect(blockGasTotalUsed).to.be.equal(txReceipt.cumulativeGasUsed)
+            }
+        })
+
+        it("check log.transaction_index,should  log.transaction_index == tx_index",async ()=>{
+            for (let i = 0; i < checkBlock.transactions.length; i++) {
+                let txReceipt = await getTxReceipt(ethers.provider,checkBlock.transactions[i].hash,20)
+                for (let j = 0; j < txReceipt.logs.length; j++) {
+                    let log = txReceipt.logs[j]
+                    expect(log.transactionIndex).to.be.equal(checkBlock.transactions[i].transactionIndex)
+                }
+            }
+        })
 
     })
 
