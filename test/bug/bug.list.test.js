@@ -302,7 +302,7 @@ describe("bug", function () {
             await sendTxToAddBlockNum(ethers.provider,1)
             // get block that tx > 2
             let latestBlkNum = await ethers.provider.getBlockNumber()
-            for (let i = latestBlkNum; i > 0 ; i++) {
+            for (let i = latestBlkNum; i > 0 ; i--) {
                 let block = await ethers.provider.getBlockWithTransactions(latestBlkNum)
                 if (block.transactions.length>=2){
                     checkBlock = block
