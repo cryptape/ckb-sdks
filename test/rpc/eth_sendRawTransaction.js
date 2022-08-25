@@ -40,17 +40,20 @@ describe("sendRawTransaction ", function () {
 
         it("to is not exist Address => to id not found by address ", async () => {
             try {
-                await ethers.provider.send("eth_sendTransaction", [{
+                let gasPrice = await getGasPrice(ethers.provider);
+
+                let tx = await ethers.provider.send("eth_sendTransaction", [{
                     "from": registerAccountAddress,
                     "to": "0x0c1efcca2bcb65a532274f3ef24c044ef4ab6d71",
                     "gas": "0xffffff",
-                    "gasPrice": "0x9184e72a000",
-                    "value": "0x9184e72a",
+                    "gasPrice": gasPrice,
+                    "value": "0x9",
                     "data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
                 }]);
             } catch (e) {
                 expect(e.toString()).to.be.contains("to id not found by address")
             }
+            expect('').to.be.include('failed')
         }).timeout(5000)
 
         it("to is  contract Address => invoke success ", async () => {
