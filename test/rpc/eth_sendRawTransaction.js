@@ -52,6 +52,7 @@ describe("sendRawTransaction ", function () {
                 }]);
             } catch (e) {
                 expect(e.toString()).to.be.contains("to id not found by address")
+                return
             }
             expect('').to.be.include('failed')
         }).timeout(5000)
