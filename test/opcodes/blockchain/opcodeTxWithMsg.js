@@ -138,7 +138,7 @@ describe("opcodeTxWithMsg.js opcode -tx msg ", function () {
         before(async function () {
             tx = await contractWithValue.call_updateMsgAndTxData(contract2NoValue.address, {
                 gasLimit: 1000000,
-                gasPrice: 90000100001112n
+                gasPrice: 901112n
             })
             receiptWithValue = await tx.wait();
             msgData = await contract2NoValue.msgData();
