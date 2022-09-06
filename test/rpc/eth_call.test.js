@@ -31,19 +31,13 @@ describe("eth_call", function () {
     })
 
     describe("tx.to", async function () {
-        it("to is EOA Address =>  to address is not a valid contract! ", async () => {
+        it("to is EOA Address =>  should return 0x ", async () => {
             let gasPrice = await getGasPrice(ethers.provider);
-            console.log("gasPrice:", gasPrice)
-            try {
-                await ethers.provider.send("eth_call", [{
+            let response =  await ethers.provider.send("eth_call", [{
                     "from": fromUserAddress,
                     "to": fromUserAddress,
                 }, "latest"]);
-            } catch (e) {
-                expect(e.toString()).to.be.contains("to address is not a valid contract.")
-                return
-            }
-            expect("").to.be.equal("failed")
+            expect(response).to.be.equal('0x')
         })
 
         it("deploy tx => failed(to address is null) ", async () => {
