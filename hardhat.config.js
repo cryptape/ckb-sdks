@@ -134,10 +134,14 @@ module.exports = {
         compilers: [
             { // for polyjuice contracts
                 version: "0.6.6",
-                settings: {}
+                settings: { optimizer: {
+                        enabled: true,
+                        runs: 2000
+                    }}
             },
             {version: "0.4.24"},
             {version: "0.5.14"},
+            {version: "0.5.16"},
             {version: "0.6.12"},
             {version: "0.7.3"},
             {version: "0.7.5"},
