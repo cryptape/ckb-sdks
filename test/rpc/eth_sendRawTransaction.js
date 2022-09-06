@@ -20,11 +20,10 @@ describe("sendRawTransaction ", function () {
 
     describe("to", async function () {
 
-        it("to is EOA Address =>  to_address can not be EOA address! ", async () => {
+        it("to is EOA Address =>  return txHash ", async () => {
             let gasPrice = await getGasPrice(ethers.provider);
             console.log("gasPrice:", gasPrice)
-            try {
-                await ethers.provider.send("eth_sendTransaction", [{
+              let tx  =  await ethers.provider.send("eth_sendTransaction", [{
                     "from": registerAccountAddress,
                     "to": registerAccountAddress,
                     "gas": "0x76c000",
@@ -32,14 +31,11 @@ describe("sendRawTransaction ", function () {
                     "value": "0x9184e72a",
                     "data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
                 }]);
-                expect("").to.be.equal("no")
-            } catch (e) {
-                expect(e.toString()).to.be.contains("to_address can not be EOA address!")
-            }
+            let response = await getTxReceipt(ethers.provider,tx,100)
+            expect(response.status).to.be.equal(1)
         }).timeout(5000)
 
-        it("to is not exist Address => to id not found by address ", async () => {
-            try {
+        it("to is not exist Address => return txHash", async () => {
                 let gasPrice = await getGasPrice(ethers.provider);
 
                 let tx = await ethers.provider.send("eth_sendTransaction", [{
@@ -50,11 +46,8 @@ describe("sendRawTransaction ", function () {
                     "value": "0x9",
                     "data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
                 }]);
-            } catch (e) {
-                expect(e.toString()).to.be.contains("to id not found by address")
-                return
-            }
-            expect('').to.be.include('failed')
+                let response = await getTxReceipt(ethers.provider,tx,100)
+                expect(response.status).to.be.equal(1)
         }).timeout(5000)
 
         it("to is  contract Address => invoke success ", async () => {

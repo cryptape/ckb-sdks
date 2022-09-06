@@ -49,21 +49,18 @@ describe("failed intercepts tx", function () {
     })
 
     it("to is eoa account", async () => {
-        try {
             const eoaAddress = (await ethers.getSigners())[1].address
-            await ethers.provider.send("eth_sendTransaction", [{
+            let tx = await ethers.provider.send("eth_sendTransaction", [{
                 "from": fromAddress,
                 "to": eoaAddress,
                 "gas": "0x99999",
                 "gasPrice": "0x11",
-                "value": "0x9184e72a",
+                "value": "0x91",
                 "data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
             }]);
-        } catch (e) {
-            expect(e.toString()).to.be.contains("to_address can not be EOA address")
-            return
-        }
-        expect('').to.be.include('failed')
+            let response = await getTxReceipt(ethers.provider,tx,100)
+            expect(response.status).to.be.equal(1)
+
     })
 
     it("to is unregister account", async () => {
@@ -180,19 +177,14 @@ describe("failed intercepts tx", function () {
     })
 
     it("to is self(metamask Cancel the tx)", async () => {
-        try {
+        // try {
             let txHash = await ethers.provider.send("eth_sendTransaction", [{
                 "from": fromAddress,
                 "to": fromAddress,
                 "gas":"0x2faf0",
             }]);
-            console.log("txHash:", txHash)
-        } catch (e) {
-            expect(e.toString()).to.be.include("to_address can not be EOA address")
-            return
-        }
-        expect("").to.be.equal("failed")
-
+           let response = await getTxReceipt(ethers.provider,txHash,100)
+            expect(response.status).to.be.equal(1)
     })
 
 
