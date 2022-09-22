@@ -220,7 +220,7 @@ describe("eth_call", function () {
                     "data": getMsgFnSign
                 }, "latest"])
             }catch (e){
-                expect(e.toString()).to.be.include("out_of_gas")
+                expect(e.toString()).to.be.include("execution reverted")
                 return
             }
             expect("").to.be.equal("failed")
@@ -250,7 +250,7 @@ describe("eth_call", function () {
                     "data": getMsgFnSign
                 }, "latest"])
             }catch (e){
-                expect(e.toString()).to.be.include("insufficient")
+                expect(e.toString().toLowerCase()).to.be.include("insufficient")
                 return
             }
             expect("").to.be.equal("failed")
