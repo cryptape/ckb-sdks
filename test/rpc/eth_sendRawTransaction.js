@@ -216,7 +216,7 @@ describe("sendRawTransaction ", function () {
                 let txInfo = await ethers.provider.getTransaction(tx)
                 console.log("txInfo:", txInfo)
             } catch (e) {
-                expect(e.toString()).to.be.include("insufficient balance")
+                expect(e.toString().toLowerCase()).to.be.include("insufficient")
                 return
             }
             expect("").to.be.contains("expected throw out of gas")
@@ -264,7 +264,7 @@ describe("sendRawTransaction ", function () {
                     "value": "0x5000000000000000000000000000000",
                 }]);
             } catch (e) {
-                expect(e.toString()).to.be.include("insufficient")
+                expect(e.toString().toLowerCase()).to.be.include("insufficient")
                 return
             }
             expect('').to.be.equal('failed')

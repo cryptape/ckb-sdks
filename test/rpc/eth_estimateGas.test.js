@@ -50,7 +50,7 @@ describe("estimateGas  ", function () {
                 await ethers.provider.send("eth_estimateGas", [{}]);
                 expect("").to.be.equal("failed")
             } catch (e) {
-                expect(e.toString()).to.be.include("UNPREDICTABLE_GAS_LIMIT")
+                expect(e.toString()).to.be.include("execution reverted")
             }
         })
 

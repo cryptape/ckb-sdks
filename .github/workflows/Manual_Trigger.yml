@@ -9,7 +9,7 @@ on:
         default: 'https://github.com/RetricSu/godwoken-kicker.git'
       GitBranchForKit:
         description: 'godwoken-kit -git branch'
-        default: 'compatibility-changes'
+        default: 'master'
       StartGodwoken:
         description: 'start godwoken'
         default: 'true'
