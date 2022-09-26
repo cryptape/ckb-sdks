@@ -36,7 +36,7 @@ jobs:
       - name: Run tests
         id: runtest
         run: |
-          npm install
+          yarn install
           npm run test:gw_alphanet_v1
           
       - name: Publish reports

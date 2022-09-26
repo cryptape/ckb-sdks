@@ -9,8 +9,7 @@
     "test:gw_testnet_v1": "hardhat test --network gw_testnet_v11",
     "test:gw_alphanet_v1": "hardhat test --network gw_alphanet_v1",
     "test:gw_local_kit_net_v1": "hardhat test --network gw_local_kit_net_v1",
-    "test:bsc_test": "hardhat test --network bsc_test",
-    "addRpcLog":"patch-package"
+    "test:bsc_test": "hardhat test --network bsc_test"
   },
   "keywords": [
     "Solidity",
@@ -27,7 +26,7 @@
     "chai": "^4.3.4",
     "ethereum-waffle": "^3.4.0",
     "ethers": "^5.4.1",
-    "hardhat": "^2.9.1",
+    "hardhat": "^2.12.0-esm.0",
     "mocha-json-output-reporter": "^2.0.1",
     "mochawesome": "^7.1.3",
     "mochawesome-report-generator": "^6.2.0",
