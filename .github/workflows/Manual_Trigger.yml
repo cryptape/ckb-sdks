@@ -105,7 +105,7 @@ jobs:
       - name: Run tests
         id: runtest
         run: |
-          npm install
+          npm install --save --legacy-peer-deps
           npm run ${{ github.event.inputs.TestScript }}
       - name: check godwoken status
         if: success() || failure()

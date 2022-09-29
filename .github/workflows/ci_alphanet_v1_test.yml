@@ -36,7 +36,7 @@ jobs:
       - name: Run tests
         id: runtest
         run: |
-          yarn install
+          npm install --save --legacy-peer-deps
           npm run test:gw_alphanet_v1
           
       - name: Publish reports
