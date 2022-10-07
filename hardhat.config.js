@@ -1,5 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-web3");
+var ethers = require("ethers").ethers;
 // var initHre = require("./hardhat/hardhat").initHre;
 
 const INFURA_PROJECT_ID = "719d739434254b88ac95d53e2b6ac997";
@@ -24,6 +25,10 @@ const PRIVATE_KEY6 = "1645b6af3e8c08278351194cdcb8198a21aca22ed097a1c7a83ac8d9eb
 
 // unregister address
 const PRIVATE_KEY7 = "29785e7e193781be1a0d5a75e1ed603739efe91a268e32690313f1606154609b"
+
+const PRIVATE_KEY8 = ethers.Wallet.createRandom().privateKey
+
+const PRIVATE_KEY9 = ethers.Wallet.createRandom().privateKey
 /**
  * @type import('hardhat/config').HardhatUserConfig
  *
@@ -39,7 +44,7 @@ module.exports = {
         axon_remote: {
             url: 'http://192.168.10.174:8000',
             // gasMultiplier: 2,
-            gas:5000000,
+            gas: 5000000,
             accounts: {
                 mnemonic: "test test test test test test test test test test test junk",
                 path: "m/44'/60'/0'/0",
@@ -50,7 +55,7 @@ module.exports = {
         },
         bsc_test: {
             url: `https://data-seed-prebsc-1-s1.binance.org:8545/`,
-            accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`,`0x${PRIVATE_KEY3}`,`0x${PRIVATE_KEY4}`,`0x${PRIVATE_KEY5}`,`0x${PRIVATE_KEY6}`]
+            accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${PRIVATE_KEY3}`, `0x${PRIVATE_KEY4}`, `0x${PRIVATE_KEY5}`, `0x${PRIVATE_KEY6}`]
         },
 
         axon_test: {
@@ -66,15 +71,15 @@ module.exports = {
 //https://godwoken-testnet-v1.ckbapp.dev/
         gw_local_kit_net_v1: {
             url: `http://127.0.0.1:8024`,
-            accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`,`0x${PRIVATE_KEY3}`,`0x${PRIVATE_KEY4}`,`0x${PRIVATE_KEY5}`,`0x${PRIVATE_KEY6}`,`0x${PRIVATE_KEY7}`]
+            accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${PRIVATE_KEY3}`, `0x${PRIVATE_KEY4}`, `0x${PRIVATE_KEY5}`, `0x${PRIVATE_KEY6}`, `0x${PRIVATE_KEY7}`]
         },
         gw_testnet_v1: {
             url: `https://godwoken-testnet-v1.ckbapp.dev/`,
-            accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`,`0x${PRIVATE_KEY3}`,`0x${PRIVATE_KEY4}`,`0x${PRIVATE_KEY5}`,`0x${PRIVATE_KEY6}`,`0x${PRIVATE_KEY7}`]
+            accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${PRIVATE_KEY3}`, `0x${PRIVATE_KEY4}`, `0x${PRIVATE_KEY5}`, `0x${PRIVATE_KEY6}`, `0x${PRIVATE_KEY7}`]
         },
         gw_testnet_v11: {
             url: `https://godwoken-betanet-v1.ckbapp.dev`,
-            accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`,`0x${PRIVATE_KEY3}`,`0x${PRIVATE_KEY4}`,`0x${PRIVATE_KEY5}`,`0x${PRIVATE_KEY6}`,`0x${PRIVATE_KEY7}`]
+            accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${PRIVATE_KEY3}`, `0x${PRIVATE_KEY4}`, `0x${PRIVATE_KEY5}`, `0x${PRIVATE_KEY6}`, `0x${PRIVATE_KEY7}`]
         },
         gw_testnet_v0: {
             url: `https://godwoken-testnet-web3-rpc.ckbapp.dev`,
@@ -82,9 +87,9 @@ module.exports = {
             accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`]
         },
         gw_alphanet_v1: {
-                url: `https://godwoken-alphanet-v1.ckbapp.dev`,
-                accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`,`0x${PRIVATE_KEY3}`,`0x${PRIVATE_KEY4}`,`0x${PRIVATE_KEY5}`,`0x${PRIVATE_KEY6}`,`0x${PRIVATE_KEY7}`]
-            },
+            url: `https://godwoken-alphanet-v1.ckbapp.dev`,
+            accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${PRIVATE_KEY3}`, `0x${PRIVATE_KEY4}`, `0x${PRIVATE_KEY5}`, `0x${PRIVATE_KEY6}`, `0x${PRIVATE_KEY7}`, `${PRIVATE_KEY8}`, `${PRIVATE_KEY9}`]
+        },
         rinkeby: {
             url: `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`,
             accounts: [`0x${PRIVATE_KEY}`]
@@ -124,7 +129,7 @@ module.exports = {
 
 
     //bsc_test
-    // defaultNetwork:"gw_alphanet_v1",
+    // defaultNetwork: "gw_alphanet_v1",
     defaultNetwork:"localEth",
 
     // defaultNetwork: "ropsten", //gw_local_kit_net_v1 gw_testnet_v11
@@ -134,10 +139,12 @@ module.exports = {
         compilers: [
             { // for polyjuice contracts
                 version: "0.6.6",
-                settings: { optimizer: {
+                settings: {
+                    optimizer: {
                         enabled: true,
                         runs: 2000
-                    }}
+                    }
+                }
             },
             {version: "0.4.24"},
             {version: "0.5.14"},
@@ -155,7 +162,7 @@ module.exports = {
                 runs: 2000
             }
         },
-        allowUnlimitedContractSize :true
+        allowUnlimitedContractSize: true
     },
     mocha: {
         /** Reporter name or constructor. */

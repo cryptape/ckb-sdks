@@ -1,46 +1,60 @@
 import hardhat from "hardhat"
 import chai from "chai"
-import {getGasPrice, getTxReceipt} from "../rpc/utils/tx.js"
 
 const {ethers} = hardhat
 const {expect} = chai
 const {BigNumber} = ethers
 
-let gasPrice = await getGasPrice(ethers.provider)
-let EOA0 = (await ethers.getSigners())[0].address
-let EOA1 = (await ethers.getSigners())[1].address
-let newEOA0 = ethers.Wallet.createRandom().address
-let baseFallbackReceive = await ethers.getContractFactory("baseFallbackReceive")
-let contract = await baseFallbackReceive.deploy()
-await contract.deployed()
-let CA0 = contract.address
+let gasPrice, avlAccount, EOA0, EOA1, newEOA0, CA0
+
+gasPrice = await getGasPrice(ethers.provider);
+//external account0 and external account1 get a fixed balance
+const signers = await ethers.getSigners();
+avlAccount = signers[0].address;
+EOA0 = signers[signers.length - 1].address;
+EOA1 = signers[signers.length - 2].address;
+newEOA0 = ethers.Wallet.createRandom({
+    extraEntropy: Buffer.from('native transfer')
+}).address;
+//deploy contract,get contract account
+const baseFallbackReceive = await ethers.getContractFactory("baseFallbackReceive");
+const contract = await baseFallbackReceive.deploy();
+await contract.deployed();
+CA0 = contract.address;
 
 describe("transfer success", function () {
-    let tests = [
+    const tests = [
         {name: "to EOA", from: EOA0, to: EOA1, value: "0x1", expectGasUsed: "21000"},
         {name: "to EOA tx.data is not null", from: EOA0, to: EOA1, value: "0x1", data: "0x12", expectGasUsed: "21016"},
         {name: "to itself", from: EOA0, to: EOA0, value: "0x10", expectGasUsed: "21000"},
         {name: "transfer 0", from: EOA0, to: EOA1, value: "0x0", expectGasUsed: "21000"},
-        {name: "transfer big value", from: EOA0, to: EOA1, value: "0x8ac7230489e80000", expectGasUsed: "21000"},
+        {name: "transfer large amounts", from: EOA0, to: EOA1, value: "0xde0b6b3aa5ef080", expectGasUsed: "21000"},
         {name: "to new EOA", from: EOA0, to: newEOA0, value: "0x100", expectGasUsed: "46000"},
         {name: "to CA", from: EOA0, to: CA0, value: "0x200", expectGasUsed: "21033"},
         {name: "to CA tx.data is not null", from: EOA0, to: CA0, data: "0x12", value: "0x300", expectGasUsed: "21050"},
     ]
 
+    before(async function () {
+        this.timeout(15000);
+        await transfer(avlAccount, EOA0, getValidHex(BigNumber.from("100000000").mul(gasPrice).toHexString()));
+        await transfer(avlAccount, EOA1, getValidHex(BigNumber.from("100000000").mul(gasPrice).toHexString()));
+        await transfer(avlAccount, EOA0, getValidHex(BigNumber.from("1000000000000000000").toHexString()));
+    });
+
     for (let i = 0; i < tests.length; i++) {
         let test = tests[i]
         it(test.name, async () => {
-            let from_balance = await ethers.provider.getBalance(test.from)
-            let to_balance = await ethers.provider.getBalance(test.to)
-            console.log('before transfer from balance:%s to balance:%s', from_balance, to_balance)
-            let response = await tranfer(test.from, test.to, test.value, test.data)
-            let estimatedGas = await estGas(test.from, test.to, test.value, test.data)
-            let from_balance_sent = await ethers.provider.getBalance(test.from)
-            let to_balance_sent = await ethers.provider.getBalance(test.to)
-            console.log('after transfer from balance:%s to balance:%s gasPrice:%s fee:%s estimatedGas:%s', from_balance_sent, to_balance_sent, parseInt(gasPrice, 16), response.gasUsed.mul(gasPrice).toString(), parseInt(estimatedGas, 16))
+            const from_balance = await ethers.provider.getBalance(test.from)
+            const to_balance = await ethers.provider.getBalance(test.to)
+            console.log(`before transfer from balance:${from_balance} to balance:${to_balance}`)
+            const estimatedGas = await estGas(test.from, test.to, test.value, test.data)
+            const response = await transfer(test.from, test.to, test.value, test.data)
+            const from_balance_sent = await ethers.provider.getBalance(test.from)
+            const to_balance_sent = await ethers.provider.getBalance(test.to)
+            console.log(`after transfer from balance:${from_balance_sent} to balance:${to_balance_sent} gasPrice:${parseInt(gasPrice, 16)} fee:${response.gasUsed.mul(gasPrice).toString()} estimatedGas:${parseInt(estimatedGas, 16)}`)
             expect(response.gasUsed).to.be.equal(test.expectGasUsed)
             expect(estimatedGas).to.be.least(response.gasUsed)
-            if (test.from == test.to) {
+            if (test.from === test.to) {
                 //from_balance-from_balance_sent=gasUsed*gasPrice
                 expect(from_balance.sub(from_balance_sent)).to.be.equal(response.gasUsed.mul(gasPrice))
             } else {
@@ -52,28 +66,33 @@ describe("transfer success", function () {
         }).timeout(20000)
     }
 
+    //refund avlAccount large amounts
     after(async function () {
         this.timeout(10000);
-        if (tests.some(v => v.name == 'transfer big value')) {
-            let test = tests[tests.findIndex(v => v.name == 'transfer big value')];
-            let from_balance = await ethers.provider.getBalance(test.from)
-            let to_balance = await ethers.provider.getBalance(test.to)
-            console.log('before final transfer from balance:%s to balance:%s', from_balance, to_balance)
-            await tranfer(test.to, test.from, test.value)
-            let from_balance_final = await ethers.provider.getBalance(test.from)
-            let to_balance_final = await ethers.provider.getBalance(test.to)
-            console.log('after final transfer from balance:%s to balance:%s', from_balance_final, to_balance_final)
-        }
+        let from = tests.some(v => v.name == 'transfer large amounts') ? EOA1 : EOA0
+        let from_balance = await ethers.provider.getBalance(from)
+        let to_balance = await ethers.provider.getBalance(avlAccount)
+        console.log(`before final transfer from balance:${from_balance} to balance:${to_balance}`)
+        await transfer(from, avlAccount, getValidHex(BigNumber.from("1000000000000000000").toHexString()))
+        let from_balance_final = await ethers.provider.getBalance(from)
+        let to_balance_final = await ethers.provider.getBalance(avlAccount)
+        console.log(`after final transfer from balance:${from_balance_final} to balance:${to_balance_final}`)
     })
 })
 
 describe("transfer failed", function () {
-    let from = EOA0
-    let to = EOA1
+    const from = EOA1
+    const to = EOA0
+
+    before(async function () {
+        this.timeout(10000);
+        await transfer(avlAccount, EOA1, getValidHex(BigNumber.from("100000000").mul(gasPrice).toHexString()));
+    });
+
     it("gasLimit not enough", async () => {
-        let from_balance = await ethers.provider.getBalance(from)
-        let to_balance = await ethers.provider.getBalance(to)
-        console.log('before transfer from balance:%s to balance:%s', from_balance, to_balance)
+        const from_balance = await ethers.provider.getBalance(from)
+        const to_balance = await ethers.provider.getBalance(to)
+        console.log(`before transfer from balance:${from_balance} to balance:${to_balance}`)
         try {
             await ethers.provider.send("eth_sendTransaction", [{
                 "from": from,
@@ -85,57 +104,56 @@ describe("transfer failed", function () {
         } catch (e) {
             expect(e.toString()).to.be.contains("intrinsic Gas too low")
         } finally {
-            let from_balance_sent = await ethers.provider.getBalance(from)
-            let to_balance_sent = await ethers.provider.getBalance(to)
-            console.log('after transfer from balance:%s to balance:%s', from_balance_sent, to_balance_sent)
+            const from_balance_sent = await ethers.provider.getBalance(from)
+            const to_balance_sent = await ethers.provider.getBalance(to)
+            console.log(`after transfer from balance:${from_balance_sent} to balance:${to_balance_sent}`)
             expect(from_balance).to.be.equal(from_balance_sent)
             expect(to_balance).to.be.equal(to_balance_sent)
         }
     }).timeout(15000)
 
     it("balance not enough", async () => {
-        let from_balance = await ethers.provider.getBalance(from)
-        let to_balance = await ethers.provider.getBalance(to)
-        console.log('before transfer from balance:%s to balance:%s', from_balance, to_balance)
+        const from_balance = await ethers.provider.getBalance(from)
+        const to_balance = await ethers.provider.getBalance(to)
+        console.log(`before transfer from balance:${from_balance} to balance:${to_balance}`)
         try {
-            await tranfer(from, to, "0xd3c21bcecceda0000000")
+            await transfer(from, to, "0x845951614014880000000")
         } catch (e) {
             expect(e.toString()).to.be.contains("insufficient balance")
-            expect(e.toString()).to.be.contains("insufficient balance")
         } finally {
-            let from_balance_sent = await ethers.provider.getBalance(from)
-            let to_balance_sent = await ethers.provider.getBalance(to)
-            console.log('after transfer from balance:%s to balance:%s', from_balance_sent, to_balance_sent)
+            const from_balance_sent = await ethers.provider.getBalance(from)
+            const to_balance_sent = await ethers.provider.getBalance(to)
+            console.log(`after transfer from balance:${from_balance_sent} to balance:${to_balance_sent}`)
             expect(from_balance).to.be.equal(from_balance_sent)
             expect(to_balance).to.be.equal(to_balance_sent)
         }
     }).timeout(15000)
 
     it("repeated nonce", async () => {
-        let txHash = await ethers.provider.send("eth_sendTransaction", [{
+        const txHash = await ethers.provider.send("eth_sendTransaction", [{
             "from": from,
             "to": to,
             "gas": "0x76c000",
             "gasPrice": gasPrice,
             "value": "0x1"
         }])
-        let txInfo = await ethers.provider.getTransaction(txHash)
-        let nonce = await ethers.provider.getTransactionCount(txInfo.from)
-        let from_balance = await ethers.provider.getBalance(from)
-        let to_balance = await ethers.provider.getBalance(to)
-        console.log('before transfer from balance:%s to balance:%s', from_balance, to_balance)
+        const txInfo = await ethers.provider.getTransaction(txHash)
+        const nonce = await ethers.provider.getTransactionCount(txInfo.from)
+        const from_balance = await ethers.provider.getBalance(from)
+        const to_balance = await ethers.provider.getBalance(to)
+        console.log(`before transfer from balance:${from_balance} to balance:${to_balance}`)
         try {
             await (await ethers.getSigners())[0].sendTransaction({
                 "to": to,
-                "value": "1",
+                "value": "0x1",
                 "nonce": nonce - 1
             })
         } catch (e) {
             expect(e.toString()).to.be.contains("invalid nonce")
         } finally {
-            let from_balance_sent = await ethers.provider.getBalance(from)
-            let to_balance_sent = await ethers.provider.getBalance(to)
-            console.log('after transfer from balance:%s to balance:%s', from_balance_sent, to_balance_sent)
+            const from_balance_sent = await ethers.provider.getBalance(from)
+            const to_balance_sent = await ethers.provider.getBalance(to)
+            console.log(`after transfer from balance:${from_balance_sent} to balance:${to_balance_sent}`)
             expect(from_balance).to.be.equal(from_balance_sent)
             expect(to_balance).to.be.equal(to_balance_sent)
         }
@@ -143,10 +161,10 @@ describe("transfer failed", function () {
 })
 
 
-async function tranfer(account0, account1, value, data) {
+async function transfer(from, to, value, data) {
     let tx = await ethers.provider.send("eth_sendTransaction", [{
-        "from": account0,
-        "to": account1,
+        from,
+        to,
         "gas": "0x76c000",
         "gasPrice": gasPrice,
         "value": value,
@@ -157,13 +175,42 @@ async function tranfer(account0, account1, value, data) {
     return response
 }
 
-async function estGas(account0, account1, value, data) {
+async function estGas(from, to, value, data) {
     return await ethers.provider.send("eth_estimateGas", [{
-        "from": account0,
-        "to": account1,
+        from,
+        to,
         "gas": "0x76c000",
         "gasPrice": gasPrice,
         "value": value,
         "data": data
     }])
+}
+
+async function getTxReceipt(provider, txHash, count) {
+    let response
+    for (let i = 0; i < count; i++) {
+        response = await provider.getTransactionReceipt(txHash);
+        if (response == null) {
+            await sleep(2000)
+            continue;
+        }
+        if (response.confirmations >= 1) {
+            return response
+        }
+        await sleep(2000)
+    }
+    return response
+}
+
+async function getGasPrice(provider) {
+    let gasPrice = await provider.getGasPrice();
+    return gasPrice.toHexString().replaceAll("0x0", "0x");
+}
+
+async function sleep(timeOut) {
+    await new Promise(r => setTimeout(r, timeOut));
+}
+
+function getValidHex(hexString) {
+    return "0x" + hexString.replace(/0x0*/, "")
 }
