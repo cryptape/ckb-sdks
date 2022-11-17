@@ -4,6 +4,10 @@ var ethers = require("ethers").ethers;
 // var initHre = require("./hardhat/hardhat").initHre;
 
 const INFURA_PROJECT_ID = "719d739434254b88ac95d53e2b6ac997";
+const ALCHEMY_API_KEY = "TJ9LWVZHHucwF6QhokTZRLv1PW-ji_-A";
+//eth_address: 0x9DD3c285F8c253fB6327549E46f82E3DEdf59E34
+const GOERLI_PRIVATE_KEY = "3bba3cb79a08ab876685eea32f9b749c3717e499a2ae7fd4127c39fdb96f1fb3";
+
 // eth_address: 0x4866f8c3d21CDb7CFf6689576cAeA91A475EA98a
 const PRIVATE_KEY = "300d786d3e31e5c928332f4cc62318ac613252938c64ebf1213f5e6a6ccf4bad";
 
@@ -111,6 +115,14 @@ module.exports = {
             url: `https://kovan.infura.io/v3/${INFURA_PROJECT_ID}`,
             accounts: [`0x${PRIVATE_KEY}`]
         },
+        goerli: {
+            url: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+            accounts: [`0x${GOERLI_PRIVATE_KEY}`]
+        },
+        gw_devnet_v1: {
+            url: `http://49.0.246.157:8024`,
+            accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${PRIVATE_KEY3}`, `0x${PRIVATE_KEY4}`, `0x${PRIVATE_KEY5}`, `0x${PRIVATE_KEY6}`, `0x${PRIVATE_KEY7}`, `${PRIVATE_KEY8}`, `${PRIVATE_KEY9}`]
+        },
         localEth: {
             url: 'http://127.0.0.1:8545',
             accounts: {
@@ -130,7 +142,7 @@ module.exports = {
 
     //bsc_test
     // defaultNetwork: "gw_alphanet_v1",
-    defaultNetwork:"localEth",
+    defaultNetwork: "localEth",
 
     // defaultNetwork: "ropsten", //gw_local_kit_net_v1 gw_testnet_v11
     // defaultNetwork: "axon_test",
@@ -153,7 +165,8 @@ module.exports = {
             {version: "0.7.3"},
             {version: "0.7.5"},
             {version: "0.8.4"},
-            {version: "0.8.6"}
+            {version: "0.8.6"},
+            {version: "0.8.12"}
 
         ], overrides: {},
         settings: {

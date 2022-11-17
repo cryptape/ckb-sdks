@@ -5,6 +5,7 @@ const {expect} = require("chai");
 // address(this).code
 // address(this).code.length
 // address(this).codehash
+const ADDRESS_CONTRACT_CODE_HASH = "0x712139b0feeb16ba10f3257ad7ba9632a5b114a1478bee086763d787ccae2150"
 describe("addressContract.js opcode -address(address(this),address(this).balance,address(this).code,address(this).code.length,address(this).codehash) ", function () {
     this.timeout(600000)
 
@@ -61,7 +62,7 @@ describe("addressContract.js opcode -address(address(this),address(this).balance
         })
 
         it("check address(this).codeHash", async () => {
-            expect(result[4]).to.be.equal("0xc5a94d21b524783a20d29f69f58fb1e79791dd9145c027947fdb87fbb1e25826");
+            expect(result[4]).to.be.equal(ADDRESS_CONTRACT_CODE_HASH);
         })
     })
 
@@ -107,7 +108,7 @@ describe("addressContract.js opcode -address(address(this),address(this).balance
         })
 
         it("check address(this).codehash", async () => {
-            expect(result.events[0].args[1].latestCodeHash).to.be.equal("0xc5a94d21b524783a20d29f69f58fb1e79791dd9145c027947fdb87fbb1e25826")
+            expect(result.events[0].args[1].latestCodeHash).to.be.equal(ADDRESS_CONTRACT_CODE_HASH)
             expect(result.events[0].args[1].latestCodeHash).to.be.equal(ethCallResult.latestCodeHash);
         })
     })
@@ -140,7 +141,7 @@ describe("addressContract.js opcode -address(address(this),address(this).balance
             expect(result[1]).to.be.equal(101n)
             expect(result[2]).to.be.equal(code)
             expect(result[3]).to.be.equal(code.length/2-1)
-            expect(result[4]).to.be.equal("0xc5a94d21b524783a20d29f69f58fb1e79791dd9145c027947fdb87fbb1e25826")
+            expect(result[4]).to.be.equal(ADDRESS_CONTRACT_CODE_HASH)
 
         })
 

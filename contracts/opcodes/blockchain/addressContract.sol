@@ -1,4 +1,4 @@
-pragma solidity ^0.8.4;
+pragma solidity =0.8.6;
 
 //type(C).name (string): the name of the contract
 //

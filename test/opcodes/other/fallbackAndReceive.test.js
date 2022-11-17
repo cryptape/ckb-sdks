@@ -60,7 +60,7 @@ describe("fallback and receive", function () {
             }])
 
             // check receipt contains receiveLogSig log
-            const receipt = await getTxReceipt(ethers.provider, result, 10)
+            const receipt = await getTxReceipt(ethers.provider, result, 100)
             expect(checkTxContainsLog(receipt, receiveLogSig)).to.be.equal(true)
 
         })
