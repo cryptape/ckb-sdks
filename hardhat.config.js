@@ -91,7 +91,7 @@ module.exports = {
             accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`]
         },
         gw_alphanet_v1: {
-            url: `https://godwoken-alphanet-v1.ckbapp.dev`,
+            url: `https://gw-alphanet-v1.godwoken.cf/instant-finality-hack`,
             accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${PRIVATE_KEY3}`, `0x${PRIVATE_KEY4}`, `0x${PRIVATE_KEY5}`, `0x${PRIVATE_KEY6}`, `0x${PRIVATE_KEY7}`, `${PRIVATE_KEY8}`, `${PRIVATE_KEY9}`]
         },
         rinkeby: {
