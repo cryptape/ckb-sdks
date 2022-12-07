@@ -121,7 +121,7 @@ describe("eth_call", function () {
                     "data": getMsgFnSign
                 }, "earliest"])
             }catch (e) {
-                expect(e.toString()).to.be.include("to address is not a valid contract")
+                expect(e.toString()).to.be.include("ProviderError: check balance err: Can't find address for sender")
             }
         })
 
