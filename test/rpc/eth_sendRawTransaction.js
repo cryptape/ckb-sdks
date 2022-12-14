@@ -34,7 +34,7 @@ describe("sendRawTransaction ", function () {
                 }]);
             let response = await getTxReceipt(ethers.provider,tx,100)
             expect(response.status).to.be.equal(1)
-        }).timeout(20000)
+        }).timeout(200000)
 
         it("to is not exist Address => return txHash", async () => {
                 let gasPrice = await getGasPrice(ethers.provider);
