@@ -9,8 +9,7 @@
     "test:gw_testnet_v1": "hardhat test --network gw_testnet_v11",
     "test:gw_alphanet_v1": "hardhat test --network gw_alphanet_v1",
     "test:gw_local_kit_net_v1": "hardhat test --network gw_local_kit_net_v1",
-    "test:bsc_test": "hardhat test --network bsc_test",
-    "postinstall": "patch-package hardhat"
+    "test:bsc_test": "hardhat test --network bsc_test"
   },
   "keywords": [
     "Solidity",
