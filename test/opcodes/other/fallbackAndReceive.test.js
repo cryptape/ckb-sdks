@@ -20,22 +20,6 @@ describe("fallback and receive", function () {
         });
 
 
-        it("0x with value=>receive(https://github.com/nervosnetwork/godwoken-web3/issues/335)", async () => {
-            //eth_estimateGas return 0x0
-            let result = await ethers.provider.send("eth_sendTransaction", [{
-                "to": fallbackAndReceiveContract.address, "data": "0x", "value": "0x11",
-            }])
-            console.log(result)
-        })
-
-        it("0x, no value=>receive(eth_call return 0x0)", async () => {
-            //eth_estimateGas return 0x0
-            let result = await ethers.provider.send("eth_call", [{
-                "to": fallbackAndReceiveContract.address, "data": "0x", "value": "0x11",
-            }, "latest"])
-            console.log(result)
-        })
-
         it("0x ,with value=>receive", async () => {
             //eth_estimateGas return 0x0
             const beforeBalanceOfContract = await ethers.provider.getBalance(fallbackAndReceiveContract.address)
@@ -51,6 +35,22 @@ describe("fallback and receive", function () {
             const balanceOfContract = await ethers.provider.getBalance(fallbackAndReceiveContract.address)
             expect(balanceOfContract.sub(beforeBalanceOfContract).toHexString()).to.be.equal("0x11")
 
+        })
+
+        it("0x with value=>receive(https://github.com/nervosnetwork/godwoken-web3/issues/335)", async () => {
+            //eth_estimateGas return 0x0
+            let result = await ethers.provider.send("eth_sendTransaction", [{
+                "to": fallbackAndReceiveContract.address, "data": "0x", "value": "0x11",
+            }])
+            console.log(result)
+        })
+
+        it("0x, no value=>receive(eth_call return 0x0)", async () => {
+            //eth_estimateGas return 0x0
+            let result = await ethers.provider.send("eth_call", [{
+                "to": fallbackAndReceiveContract.address, "data": "0x", "value": "0x11",
+            }, "latest"])
+            console.log(result)
         })
 
         it("0x ,no value => receive", async () => {
