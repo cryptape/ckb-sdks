@@ -7,7 +7,7 @@ const {getTxReceipt} = require("../../rpc/utils/tx.js");
 receiveLogSig = "0x26002f13cda87336975286da772958298bec2da9e741d7e196bee6d11e1a4cc2"
 fallbackLogSig = "0x2ed95b708d6d6c8bf930186255cc1fa24903be080fd4f7161f6fd607014af13d"
 describe("fallback and receive", function () {
-    this.timeout(100000)
+    this.timeout(200000)
 
 
     describe("fallbackAndReceive", function () {
