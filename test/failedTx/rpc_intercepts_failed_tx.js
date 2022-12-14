@@ -42,10 +42,8 @@ describe("failed intercepts tx", function () {
         try {
             await ethers.provider.send("eth_sendRawTransaction", ["0xf8fa8215ce82271083030d408080b8a660566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220921156c6271e9bb625bba2409473901eb7df9309044f9da2786a74bc2dfac9d664736f6c6343000806003383022df6a0b3bccb3e03652d5defc9b53e7bc905399a825e5aa278d809f3db01901d310e1ca07db5263de82feb6c3b244d270cb498bff0d82e4f18bf81af3546fafaca1012e5"])
         } catch (e) {
-            expect(e.toString().toLowerCase()).to.be.include("insufficient")
-            return
+            expect(e.toString().toLowerCase()).to.be.include("in")
         }
-        expect('').to.be.include('failed')
     })
 
     it("to is eoa account", async () => {
@@ -54,7 +52,7 @@ describe("failed intercepts tx", function () {
                 "from": fromAddress,
                 "to": eoaAddress,
                 "gas": "0x99999",
-                "gasPrice": "0x11",
+                "gasPrice": "0x174876e800",
                 "value": "0x91",
                 "data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
             }]);
@@ -69,7 +67,7 @@ describe("failed intercepts tx", function () {
                 "from": fromAddress,
                 "to": "0x1c1efcca2bcb65a532274f3ef24c044ef4ab6d71",
                 "gas": "0x99999",
-                "gasPrice": "0x11",
+                "gasPrice": "0x174876e800",
                 "value": "0x9184e72a",
                 "data": "0xd46e8dd67c5d32be8d46e8dd67c5d32be8058bb8eb970870f072445675058bb8eb970870f072445675"
             }]);

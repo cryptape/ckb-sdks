@@ -105,11 +105,10 @@ describe("sendRawTransaction ", function () {
 
         it("gasLimit default => invoke succ", async () => {
             let gasPrice = await getGasPrice(ethers.provider);
-
             console.log("gasPrice:", gasPrice._hex)
             let tx = await ethers.provider.send("eth_sendTransaction", [{
                 "from": registerAccountAddress,
-                "gasPrice": "0x1",
+                "gasPrice": gasPrice,
                 "data": fallbackAndReceiveContract.bytecode
             }]);
             let response = await getTxReceipt(ethers.provider, tx, 5)

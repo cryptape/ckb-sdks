@@ -299,11 +299,11 @@ describe("bug", function () {
         let checkBlock;
         before(async function () {
             // send tx add block
-            await sendTxToAddBlockNum(ethers.provider,1)
+            await sendTxToAddBlockNum(ethers.provider,2)
             // get block that tx > 2
             let latestBlkNum = await ethers.provider.getBlockNumber()
             for (let i = latestBlkNum; i > 0 ; i--) {
-                let block = await ethers.provider.getBlockWithTransactions(latestBlkNum)
+                let block = await ethers.provider.getBlockWithTransactions(i)
                 if (block.transactions.length>=2){
                     checkBlock = block
                     return

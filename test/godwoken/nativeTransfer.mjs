@@ -10,9 +10,9 @@ let gasPrice, avlAccount, EOA0, EOA1, newEOA0, CA0
 gasPrice = await getGasPrice(ethers.provider);
 //external account0 and external account1 get a fixed balance
 const signers = await ethers.getSigners();
-avlAccount = signers[0].address;
-EOA0 = signers[signers.length - 1].address;
-EOA1 = signers[signers.length - 2].address;
+avlAccount = signers[0].address; //// eth_address: 0x4866f8c3d21CDb7CFf6689576cAeA91A475EA98a
+EOA0 = signers[signers.length - 1].address; //last account
+EOA1 = signers[signers.length - 2].address; //倒数第二个地址
 newEOA0 = ethers.Wallet.createRandom({
     extraEntropy: Buffer.from('native transfer')
 }).address;
@@ -20,7 +20,7 @@ newEOA0 = ethers.Wallet.createRandom({
 const baseFallbackReceive = await ethers.getContractFactory("baseFallbackReceive");
 const contract = await baseFallbackReceive.deploy();
 await contract.deployed();
-CA0 = contract.address;
+CA0 = contract.address;//合约地址
 
 describe("transfer success", function () {
     const tests = [
@@ -35,17 +35,17 @@ describe("transfer success", function () {
     ]
 
     before(async function () {
-        this.timeout(15000);
+        this.timeout(25000);
         await transfer(avlAccount, EOA0, getValidHex(BigNumber.from("100000000").mul(gasPrice).toHexString()));
         await transfer(avlAccount, EOA1, getValidHex(BigNumber.from("100000000").mul(gasPrice).toHexString()));
         await transfer(avlAccount, EOA0, getValidHex(BigNumber.from("1000000000000000000").toHexString()));
     });
 
     for (let i = 0; i < tests.length; i++) {
-        let test = tests[i]
+        let test = tests[i] //length=1
         it(test.name, async () => {
-            const from_balance = await ethers.provider.getBalance(test.from)
-            const to_balance = await ethers.provider.getBalance(test.to)
+            const from_balance = await ethers.provider.getBalance(test.from) //100000000 + 1000000000000000000
+            const to_balance = await ethers.provider.getBalance(test.to) //100000000
             console.log(`before transfer from balance:${from_balance} to balance:${to_balance}`)
             const estimatedGas = await estGas(test.from, test.to, test.value, test.data)
             const response = await transfer(test.from, test.to, test.value, test.data)
@@ -149,7 +149,7 @@ describe("transfer failed", function () {
                 "nonce": nonce - 1
             })
         } catch (e) {
-            expect(e.toString()).to.be.contains("invalid nonce")
+            expect(e.toString()).to.be.contains("invalid")
         } finally {
             const from_balance_sent = await ethers.provider.getBalance(from)
             const to_balance_sent = await ethers.provider.getBalance(to)
