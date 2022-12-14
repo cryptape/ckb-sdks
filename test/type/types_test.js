@@ -297,7 +297,7 @@ describe("type  max min data test",function (){
 
             let tx = await contract.changName();
             console.log("The new string  is :", await contract.getName());
-            awaittx.wait();
+            await tx.wait();
             expect(await contract.getName()).to.equal("Zrptotest")
 
         })

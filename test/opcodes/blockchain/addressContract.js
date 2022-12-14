@@ -5,7 +5,7 @@ const {expect} = require("chai");
 // address(this).code
 // address(this).code.length
 // address(this).codehash
-const ADDRESS_CONTRACT_CODE_HASH = "0xf25458ae55e1792723508bbd86bcb258c48b790154935d0c1d969bd4a6b25588"
+const ADDRESS_CONTRACT_CODE_HASH = "0x712139b0feeb16ba10f3257ad7ba9632a5b114a1478bee086763d787ccae2150"
 describe("addressContract.js opcode -address(address(this),address(this).balance,address(this).code,address(this).code.length,address(this).codehash) ", function () {
     this.timeout(600000)
 

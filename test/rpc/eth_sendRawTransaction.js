@@ -2,6 +2,7 @@ const {ethers} = require("hardhat");
 const {expect} = require("chai");
 const {getGasPrice, getTxReceipt, BigInterToHexString} = require("./utils/tx.js");
 const {BigNumber} = require("ethers");
+const {ether} = require("@openzeppelin/test-helpers");
 
 
 describe("sendRawTransaction ", function () {
@@ -275,16 +276,15 @@ describe("sendRawTransaction ", function () {
     })
     describe("value gas gasPrice", function () {
         it("balance = balance-value-gasPrice*gasUsed", async () => {
-
             let beforeDeployBalance = await ethers.provider.getBalance(ethers.provider.getSigner(0).getAddress())
             let tx = await ethers.provider.send("eth_sendTransaction", [{
                 "data": logContract.bytecode,
-                "gasPrice": "0x5000",
+                "gasPrice": "0x174876e800",
                 "value": "0x11",
             }]);
             let response = await getTxReceipt(ethers.provider, tx, 10)
             let afterDeployBalance = await ethers.provider.getBalance(ethers.provider.getSigner(0).getAddress())
-            expect(beforeDeployBalance.sub(BigNumber.from("0x5000").mul(response.gasUsed)).sub(BigNumber.from("0x11"))).to.be.equal(afterDeployBalance);
+            expect(beforeDeployBalance.sub(BigNumber.from("0x174876e800").mul(response.gasUsed)).sub(BigNumber.from("0x11"))).to.be.equal(afterDeployBalance);
         }).timeout(50000)
     })
 
@@ -322,10 +322,10 @@ describe("sendRawTransaction ", function () {
                     "nonce": penddingNonce,
                     "data": logContract.bytecode,
                 })
-                let sendReturnHashNonces = await getTxCount(currentAddress);
-                expect(sendBeforeNonces[0]).to.be.equal(sendBeforeNonces[1])
-                expect(sendReturnHashNonces[0]).to.be.equal(sendReturnHashNonces[1])
-                expect(sendBeforeNonces[0] + 1).to.be.equal(sendReturnHashNonces[1])
+                let sendReturnHashNonces = await getTxCount(currentAddress);//n+1
+                expect(sendBeforeNonces[0]).to.be.equal(sendBeforeNonces[1])//n
+                expect(sendReturnHashNonces[1]).to.be.most(sendReturnHashNonces[0])//节点带后缀，未上链即可获得，nonce相等（pending和last）
+                expect(sendReturnHashNonces[1]).to.be.most(sendBeforeNonces[0] + 1)
             }).timeout(5000000)
 
             it("tx is failed tx => pending and  latest  update ", async () => {
@@ -341,7 +341,7 @@ describe("sendRawTransaction ", function () {
                 }])
                 await getTxReceipt(ethers.provider, tx, 100)
                 let sendReturnHashNonces = await getTxCount(currentAddress);
-                expect(sendBeforeNonces[0]).to.be.equal(sendBeforeNonces[1])
+                expect(sendBeforeNonces[0]).to.be.most(sendBeforeNonces[1])
                 expect(sendReturnHashNonces[0]).to.be.equal(sendReturnHashNonces[1])
                 expect(sendBeforeNonces[0] + 1).to.be.equal(sendReturnHashNonces[1])
             })
