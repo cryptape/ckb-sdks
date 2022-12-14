@@ -33,7 +33,7 @@ describe("sendRawTransaction ", function () {
                 }]);
             let response = await getTxReceipt(ethers.provider,tx,100)
             expect(response.status).to.be.equal(1)
-        }).timeout(5000)
+        }).timeout(20000)
 
         it("to is not exist Address => return txHash", async () => {
                 let gasPrice = await getGasPrice(ethers.provider);
@@ -48,7 +48,7 @@ describe("sendRawTransaction ", function () {
                 }]);
                 let response = await getTxReceipt(ethers.provider,tx,100)
                 expect(response.status).to.be.equal(1)
-        }).timeout(5000)
+        }).timeout(10000)
 
         it("to is  contract Address => invoke success ", async () => {
             let gasPrice = await getGasPrice(ethers.provider);
@@ -65,7 +65,7 @@ describe("sendRawTransaction ", function () {
             console.log("response:", response)
             let balanceOfContract = await ethers.provider.getBalance(contract.address)
             expect(balanceOfContract).to.be.equal(1)
-        }).timeout(100000)
+        }).timeout(200000)
 
         it("to is null => deploy tx", async () => {
             let gasPrice = await getGasPrice(ethers.provider);
@@ -109,7 +109,7 @@ describe("sendRawTransaction ", function () {
             console.log("gasPrice:", gasPrice._hex)
             let tx = await ethers.provider.send("eth_sendTransaction", [{
                 "from": registerAccountAddress,
-                "gasPrice": "0x1",
+                "gasPrice": gasPrice,
                 "data": fallbackAndReceiveContract.bytecode
             }]);
             let response = await getTxReceipt(ethers.provider, tx, 5)
@@ -227,31 +227,35 @@ describe("sendRawTransaction ", function () {
     describe("value", function () {
 
         it("value is 0=> normal tx", async () => {
+            let gasPrice = await getGasPrice(ethers.provider);
             let account0Address = await ethers.provider.getSigner(0).getAddress()
             let beforeDeployBalance = await ethers.provider.getBalance(account0Address)
+            // console.log("aaaa11111:", beforeDeployBalance)
             let tx = await ethers.provider.send("eth_sendTransaction", [{
                 "data": fallbackAndReceiveContract.bytecode,
-                "gasPrice": "0x1",
+                "gasPrice": gasPrice,
                 "value": null,
             }]);
             let response = await getTxReceipt(ethers.provider, tx, 20)
 
             let afterDeployBalance = await ethers.provider.getBalance(account0Address)
-            expect(beforeDeployBalance.sub(response.gasUsed)).to.be.equal(afterDeployBalance);
+            // console.log("aaaa22222:", afterDeployBalance)
+            expect(beforeDeployBalance.sub(response.gasUsed*gasPrice)).to.be.equal(afterDeployBalance);
         }).timeout(40000)
 
         it("value is 500 =>  to+500 ,from -500", async () => {
+            let gasPrice = await getGasPrice(ethers.provider);
             let account0Address = await ethers.provider.getSigner(0).getAddress();
             let beforeDeployBalance = await ethers.provider.getBalance(account0Address)
             let tx = await ethers.provider.send("eth_sendTransaction", [{
                 "data": logContract.bytecode,
-                "gasPrice": "0x1",
+                "gasPrice": gasPrice,
                 "value": "0x5",
             }]);
             let response = await getTxReceipt(ethers.provider, tx, 20)
             let afterDeployBalance = await ethers.provider.getBalance(account0Address)
             let contractBalance = await ethers.provider.getBalance(response.contractAddress)
-            expect(beforeDeployBalance.sub(BigNumber.from("0x5")).sub(response.gasUsed)).to.be.equal(afterDeployBalance);
+            expect(beforeDeployBalance.sub(BigNumber.from("0x5")).sub(BigNumber.from(BigNumber.from(response.gasUsed).mul(gasPrice)))).to.be.equal(afterDeployBalance);
             expect(contractBalance).to.be.equal(BigNumber.from("0x5"));
         }).timeout(40000)
 
