@@ -183,7 +183,7 @@ module.exports = {
             {version: "0.7.5"},
             {version: "0.8.4"},
             {version: "0.8.6"},
-            {version: "0.8.12"} //todo delete 0.8.12 && compile again
+            {version: "0.8.12"}
 
         ], overrides: {},
         settings: {
