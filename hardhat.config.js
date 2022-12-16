@@ -33,7 +33,21 @@ const PRIVATE_KEY7 = "29785e7e193781be1a0d5a75e1ed603739efe91a268e32690313f16061
 const PRIVATE_KEY8 = ethers.Wallet.createRandom().privateKey
 
 const PRIVATE_KEY9 = ethers.Wallet.createRandom().privateKey
-/**
+
+const PRIVATE_KEYS = [
+    "a450a5a112f44ecc5616efc6c040e2179ba0ee9bbf2701c83a1744821415fb8c",
+    "00f0d084b9b2ddafb3108e0d8dfcc07cec275077d0f326ac799f8c89c8d32952",
+    "31b5ef51e3def921d1b0723bcb5a594524eab64388e788425ce565b852a47ad1",
+    "19e26e5b11ea84a6845b598f23ac97d90e43629a5cc9ba2e54845d87f49c2598",
+    "b9a8ec1fb2c090df851538835bda1215caf1d27c87341c252a6c838478678430",
+    "f57cda11b45e135c78d6fcdbfaab96954d55540f5de754cd824aa376578f67f6",
+    "3047e6112e43e5fa0fb98ce457f295ae1e63a518c3b6215e06446100c1a34ef8",
+    "b847069c96bbfc9cad335553f57e5fee3b84ebaf4dde3337e22afb44b40ca193",
+    "1d8124a4e5f16c1f0059a74831cb4d71e32f19a3d3dbae78459c731100ea03bf",
+    "cf0b447128221521fdc7b96975ed512c9a813e0bfe56fdfa2f3bcd2ba46fc75"
+]
+
+    /**
  * @type import('hardhat/config').HardhatUserConfig
  *
  * */
@@ -92,7 +106,8 @@ module.exports = {
         },
         gw_alphanet_v1: {
             url: `https://gw-alphanet-v1.godwoken.cf/instant-finality-hack`,
-            accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${PRIVATE_KEY3}`, `0x${PRIVATE_KEY4}`, `0x${PRIVATE_KEY5}`, `0x${PRIVATE_KEY6}`, `0x${PRIVATE_KEY7}`, `${PRIVATE_KEY8}`, `${PRIVATE_KEY9}`]
+            // accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${PRIVATE_KEY3}`, `0x${PRIVATE_KEY4}`, `0x${PRIVATE_KEY5}`, `0x${PRIVATE_KEY6}`, `0x${PRIVATE_KEY7}`, `${PRIVATE_KEY8}`, `${PRIVATE_KEY9}`]
+            accounts:[`0x${PRIVATE_KEYS[0]}`, `0x${PRIVATE_KEYS[1]}`, `0x${PRIVATE_KEYS[2]}`]
         },
         rinkeby: {
             url: `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`,
@@ -122,6 +137,7 @@ module.exports = {
         gw_devnet_v1: {
             url: `http://18.162.235.225:8024`,
             accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${PRIVATE_KEY3}`, `0x${PRIVATE_KEY4}`, `0x${PRIVATE_KEY5}`, `0x${PRIVATE_KEY6}`, `0x${PRIVATE_KEY7}`, `${PRIVATE_KEY8}`, `${PRIVATE_KEY9}`]
+            // accounts:[`0x${PRIVATE_KEYS[0]}`, `0x${PRIVATE_KEYS[1]}`, `0x${PRIVATE_KEYS[2]}`]
         },
         localEth: {
             url: 'http://127.0.0.1:8545',
@@ -141,12 +157,12 @@ module.exports = {
 
 
     //bsc_test
-    // defaultNetwork: "gw_alphanet_v1",
+    defaultNetwork: "gw_alphanet_v1",
     // defaultNetwork: "localEth",
 
     // defaultNetwork: "ropsten", //gw_local_kit_net_v1 gw_testnet_v11
     // defaultNetwork: "axon_test",
-    defaultNetwork: "gw_devnet_v1",
+    // defaultNetwork: "gw_devnet_v1",
     solidity: {
         compilers: [
             { // for polyjuice contracts
@@ -166,7 +182,7 @@ module.exports = {
             {version: "0.7.5"},
             {version: "0.8.4"},
             {version: "0.8.6"},
-            {version: "0.8.12"}
+            {version: "0.8.12"} //todo delete 0.8.12 && compile again
 
         ], overrides: {},
         settings: {
