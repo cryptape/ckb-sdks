@@ -107,7 +107,8 @@ module.exports = {
         gw_alphanet_v1: {
             url: `https://gw-alphanet-v1.godwoken.cf/instant-finality-hack`,
             // accounts: [`0x${PRIVATE_KEY}`, `0x${PRIVATE_KEY2}`, `0x${PRIVATE_KEY3}`, `0x${PRIVATE_KEY4}`, `0x${PRIVATE_KEY5}`, `0x${PRIVATE_KEY6}`, `0x${PRIVATE_KEY7}`, `${PRIVATE_KEY8}`, `${PRIVATE_KEY9}`]
-            accounts:[`0x${PRIVATE_KEYS[0]}`, `0x${PRIVATE_KEYS[1]}`, `0x${PRIVATE_KEYS[2]}`]
+            accounts:[`0x${PRIVATE_KEYS[0]}`, `0x${PRIVATE_KEYS[1]}`, `0x${PRIVATE_KEYS[2]}`, `0x${PRIVATE_KEYS[3]}`, `0x${PRIVATE_KEYS[4]}`,
+                `0x${PRIVATE_KEYS[5]}`, `0x${PRIVATE_KEYS[6]}`, `0x${PRIVATE_KEYS[7]}`, `0x${PRIVATE_KEYS[8]}`, `0x${PRIVATE_KEYS[9]}`]
         },
         rinkeby: {
             url: `https://rinkeby.infura.io/v3/${INFURA_PROJECT_ID}`,
