@@ -195,7 +195,8 @@ module.exports = {
     },
     mocha: {
         /** Reporter name or constructor. */
-        reporter: "mochawesome"
+        reporter: "mochawesome",
+        retries:3
         // timeout: 5000000,
         // /** Reporter settings object. */
         // reporterOptions: {
