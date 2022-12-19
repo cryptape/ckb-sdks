@@ -7,8 +7,6 @@ const {expect} = require("chai");
 
 let mnemonic;
 let gasPrice = "0x174876e800";
-let priKeys;
-let ethAddrs;
 
 describe("wallet", function () {
 
