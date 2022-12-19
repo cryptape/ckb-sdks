@@ -34,6 +34,9 @@
     "web3": "^1.7.1"
   },
   "dependencies": {
-    "abi-decoder": "^2.4.0"
+    "abi-decoder": "^2.4.0",
+    "bip39": "^3.0.4",
+    "ethereum-hdwallet": "^0.1.2",
+    "keythereum": "^2.0.0"
   }
 }
